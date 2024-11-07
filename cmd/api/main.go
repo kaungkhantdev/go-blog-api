@@ -2,13 +2,13 @@ package main
 
 import (
 	"fmt"
-	"go-blog-api/internal/server"
+	"go-blog-api/internal/app"
 )
 
 func main() {
 	fmt.Println("hello, I am GO")
 
-	server := server.NewServer()
+	server := app.NewServer()
 
 	fmt.Println("Server address: ", server.Addr)
 
