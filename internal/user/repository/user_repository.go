@@ -1,19 +1,18 @@
 package repository
 
 import (
+	"go-blog-api/internal/user/interfaces"
 	"go-blog-api/internal/user/models"
 
 	"gorm.io/gorm"
 )
 
 type UserRepository struct {
-	db *gorm.DB;
+	db *gorm.DB
 }
 
-func NewUserRepository(db *gorm.DB) *UserRepository {
-	return &UserRepository{
-		db: db,
-	}
+func NewUserRepository(db *gorm.DB) interfaces.UserRepositoryInterface {
+	return &UserRepository{db: db}
 }
 
 func (repo *UserRepository) CreateUser(user *models.User) (models.User, error) {
@@ -24,10 +23,10 @@ func (repo *UserRepository) CreateUser(user *models.User) (models.User, error) {
 	return *user, nil
 }
 
-func (repo *UserRepository) FindByIdUser(id int) (*models.User, error) {
-    var user models.User
-    if err := repo.db.First(&user, id).Error; err != nil {
-        return nil, err
-    }
-    return &user, nil
+func (repo *UserRepository) FindByIdUser(id int) (models.User, error) {
+	var user models.User
+	if err := repo.db.First(&user, id).Error; err != nil {
+		return models.User{}, err
+	}
+	return user, nil
 }
