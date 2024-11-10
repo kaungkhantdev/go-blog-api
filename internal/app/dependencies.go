@@ -2,13 +2,16 @@ package app
 
 import (
 	"go-blog-api/database"
-	"go-blog-api/internal/user/handlers"
+	authHandler "go-blog-api/internal/auth/handlers"
+	userHandler "go-blog-api/internal/user/handlers"
 	"go-blog-api/internal/user/repository"
 	"go-blog-api/internal/user/services"
+	"go-blog-api/pkg/validator"
 )
 
 type Dependencies struct {
-	UserHandler *handlers.UserHandler
+	UserHandler *userHandler.UserHandler
+	AuthHandler *authHandler.AuthHandler
 }
 
 func NewAppDependencies() (*Dependencies, error) {
@@ -19,11 +22,18 @@ func NewAppDependencies() (*Dependencies, error) {
 		return nil, err
 	}
 
+	// init validator
+	validator.InitValidator()
+
+	// auth
+	AuthHandler := authHandler.NewAuthHandler()
+
 	var UserRepo = repository.NewUserRepository(DB)
 	UserService := services.NewUserService(UserRepo)
-	UserHandler := handlers.NewUserHandler(UserService)
+	UserHandler := userHandler.NewUserHandler(UserService)
 
 	return &Dependencies{
 		UserHandler: UserHandler,
+		AuthHandler: AuthHandler,
 	}, err
 }

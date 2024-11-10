@@ -14,5 +14,4 @@ type User struct {
 	DelFlag   bool      `gorm:"type:tinyint(1);default:0" json:"del_flag"`
 	CreatedAt time.Time `gorm:"autoCreateTime" json:"created_at"`
 	UpdatedAt time.Time `gorm:"autoUpdateTime" json:"updated_at"`
-	OtpId     string    `gorm:"type:varchar(50)" json:"otp_id"`
 }

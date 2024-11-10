@@ -18,6 +18,8 @@ func (s *Server) RegisterRoutes() http.Handler {
 	router, deps := s.InitRoutes(routerGroup)
 	s.UserRoutes(router, deps)
 
+	s.AuthRoutes(router, deps)
+
 	return route
 }
 
@@ -29,6 +31,11 @@ func (s *Server) InitRoutes(router *gin.RouterGroup) (*gin.RouterGroup, *Depende
 	}
 
 	return router, deps
+}
+
+func (s *Server) AuthRoutes(router *gin.RouterGroup, deps *Dependencies) {
+	authRoute := router.Group("/auth")
+	authRoute.POST("/sign-up", deps.AuthHandler.SignUp)
 }
 
 func (s *Server) UserRoutes(router *gin.RouterGroup, deps *Dependencies) {

@@ -2,7 +2,6 @@ package database
 
 import (
 	"fmt"
-	"go-blog-api/internal/user/models"
 	"log"
 	"os"
 
@@ -10,6 +9,9 @@ import (
 	"gorm.io/gorm"
 
 	_ "github.com/joho/godotenv/autoload"
+
+	otpModel "go-blog-api/internal/otp/models"
+	userModel "go-blog-api/internal/user/models"
 )
 
 var (
@@ -35,7 +37,7 @@ func Connect() (*gorm.DB, error) {
 	log.Println("Successfully connected to the database.")
 
 	// Run AutoMigrate
-	autoMigrateDB := DB.AutoMigrate(&models.User{})
+	autoMigrateDB := DB.AutoMigrate(&userModel.User{}, &otpModel.Otp{})
 	if err := autoMigrateDB; err != nil {
 		log.Fatalf("Failed to auto-migrate: %v", err)
 	}
