@@ -35,6 +35,8 @@ func (s *Server) InitRoutes(router *gin.RouterGroup) (*gin.RouterGroup, *Depende
 
 func (s *Server) AuthRoutes(router *gin.RouterGroup, deps *Dependencies) {
 	authRoute := router.Group("/auth")
+	authRoute.POST("/get-otp", deps.AuthHandler.GetOtpViaEmail)
+	authRoute.POST("/verify-otp", deps.AuthHandler.VerifyOtpViaEmail)
 	authRoute.POST("/sign-up", deps.AuthHandler.SignUp)
 }
 

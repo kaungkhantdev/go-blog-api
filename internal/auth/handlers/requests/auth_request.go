@@ -12,11 +12,11 @@ type AuthSignUpRequest struct {
 	Bio       string `json:"bio"`
 }
 
-type AuthEmailRequest struct {
+type AuthOtpRequest struct {
 	Email    string `json:"email" validate:"required,email"`
 }
 
-type AuthOtpRequest struct {
-	Email    string `json:"email" validate:"required,email"`
+type AuthVerifyOtpRequest struct {
+	Email   string `json:"email" validate:"required,email"`
 	Otp     string `json:"otp" validate:"required"`
 }
