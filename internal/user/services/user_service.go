@@ -15,7 +15,7 @@ func NewUserService(repo interfaces.UserRepositoryInterface) *UserService {
 	}
 }
 
-func (service *UserService) CreateService(data *models.User) (models.User, error) {
+func (service *UserService) CreateUser(data *models.User) (models.User, error) {
 	newUser, err := service.repo.CreateUser(data)
 	if err != nil {
 		return models.User{}, err

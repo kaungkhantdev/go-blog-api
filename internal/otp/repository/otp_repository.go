@@ -16,8 +16,8 @@ func NewOtpRepository(db *gorm.DB) interfaces.OtpRepositoryInterface {
 }
 
 func (repo *OtpRepository) CreateOtp(data *models.Otp) (models.Otp, error) {
-	err := repo.db.Create(data).Error
-	if err != nil { 
+	
+	if err := repo.db.Create(data).Error; err != nil { 
 		return models.Otp{}, err
 	}
 	return *data, nil

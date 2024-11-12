@@ -2,11 +2,17 @@ package app
 
 import (
 	"go-blog-api/database"
-	authHandler "go-blog-api/internal/auth/handlers"
-	userHandler "go-blog-api/internal/user/handlers"
-	"go-blog-api/internal/user/repository"
-	"go-blog-api/internal/user/services"
 	"go-blog-api/pkg/validator"
+
+	otpRepo 	"go-blog-api/internal/otp/repository"
+	otpService "go-blog-api/internal/otp/services"
+	
+	userRepo 	"go-blog-api/internal/user/repository"
+	userService "go-blog-api/internal/user/services"
+	userHandler "go-blog-api/internal/user/handlers"
+
+	authService	"go-blog-api/internal/auth/services"
+	authHandler "go-blog-api/internal/auth/handlers"
 )
 
 type Dependencies struct {
@@ -25,12 +31,16 @@ func NewAppDependencies() (*Dependencies, error) {
 	// init validator
 	validator.InitValidator()
 
-	// auth
-	AuthHandler := authHandler.NewAuthHandler()
-
-	var UserRepo = repository.NewUserRepository(DB)
-	UserService := services.NewUserService(UserRepo)
+	var OtpRepo = otpRepo.NewOtpRepository(DB)
+	OtpService := otpService.NewOtpService(OtpRepo)
+	
+	var UserRepo = userRepo.NewUserRepository(DB)
+	UserService := userService.NewUserService(UserRepo)
 	UserHandler := userHandler.NewUserHandler(UserService)
+	
+	// auth
+	AuthService := authService.NewAuthService(OtpService, UserService)
+	AuthHandler := authHandler.NewAuthHandler(AuthService)
 
 	return &Dependencies{
 		UserHandler: UserHandler,

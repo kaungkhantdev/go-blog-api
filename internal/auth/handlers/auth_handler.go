@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"go-blog-api/internal/auth/services"
 	"go-blog-api/internal/auth/handlers/requests"
 	"go-blog-api/pkg/validator"
 	"net/http"
@@ -9,10 +10,13 @@ import (
 )
 
 type AuthHandler struct {
+	authService *services.AuthService
 }
 
-func NewAuthHandler() *AuthHandler {
-	return &AuthHandler{}
+func NewAuthHandler(authService *services.AuthService) *AuthHandler {
+	return &AuthHandler{
+		authService: authService,
+	}
 }
 
 func (handler *AuthHandler) GetOtpViaEmail(context *gin.Context) {
@@ -28,7 +32,15 @@ func (handler *AuthHandler) GetOtpViaEmail(context *gin.Context) {
 		return
 	}
 
-	context.JSON(http.StatusAccepted, gin.H{"data": input})
+	data, err := handler.authService.GetOtpViaEmail(input.Email)
+
+
+	if err != nil {
+		context.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	context.JSON(http.StatusAccepted, gin.H{"data": data})
 
 }
 
