@@ -5,6 +5,7 @@ import (
 
 	otp "go-blog-api/internal/otp/services"
 	user "go-blog-api/internal/user/services"
+	"go-blog-api/pkg/generate_otp"
 )
 
 type AuthService struct {
@@ -35,17 +36,24 @@ func (auth AuthService) SignIn() {
 func (auth AuthService) GetOtpViaEmail(email string) (string, error) {
 	// TODO
 	// get email
-	// check email it's ald exit or not
-	// generate otp
-	// send otp via email
 
 	hasEmail, _ := auth.otpService.GetOtpByEmail(email)
 
+	// check email it's ald exit or not
 	if hasEmail.Email != "" {
 		return "", errors.New("email has ald exit")
 	}
 
-	return "123", nil
+	// generate otp
+	otp, err := generate_otp.GenerateOtp(6)
+	if err != nil { 
+		return "", errors.New("otp generate error")
+	}
+
+	// send otp via email
+
+
+	return otp, nil
 }
 
 func (auth AuthService) VerifyOtpViaEmail() {
