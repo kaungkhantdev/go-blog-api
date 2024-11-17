@@ -3,7 +3,12 @@ package mail
 import (
 	"bytes"
 	"html/template"
+	"log"
+	"os"
+	"path/filepath"
+	"strconv"
 
+	_ "github.com/joho/godotenv/autoload"
 	"gopkg.in/gomail.v2"
 )
 
@@ -23,16 +28,44 @@ func NewEmailService(config EmailConfig) *EmailService {
     return &EmailService{ Config: config }
 }
 
+func NewEmailConfig() EmailConfig {
+    return EmailConfig{
+        SMTPHost:    os.Getenv("MAIL_HOST"),
+        SMTPPort:    parseEnvInt(os.Getenv("MAIL_PORT"), 465),
+        Username:    os.Getenv("MAIL_USER"),
+        Password:    os.Getenv("MAIL_PASS"),
+        FromAddress: os.Getenv("MAIL_USER"),
+    }
+}
+
+func parseEnvInt(key string, defaultValue int) int {
+	value := os.Getenv(key)
+	if value == "" {
+		return defaultValue
+	}
+
+	parsedValue, err := strconv.Atoi(value)
+	if err != nil {
+		log.Printf("Invalid integer for %s: %v. Using default value %d", key, err, defaultValue)
+		return defaultValue
+	}
+
+	return parsedValue
+}
+
+
 func (s *EmailService) SendEmail(
     to []string,
-	subject, templateFile string,
+	subject, templateName string,
 	data interface{},
 	cc []string,    // Optional
 	bcc []string,   // Optional
 	attachments []string, // Optional
 ) error {
 
-    tmpl, err := template.ParseFiles(templateFile)
+    templatePath := filepath.Join("pkg", "mail", "templates", templateName)
+
+    tmpl, err := template.ParseFiles(templatePath)
     if err != nil {
         return err
     }
