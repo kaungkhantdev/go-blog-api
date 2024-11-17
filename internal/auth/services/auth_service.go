@@ -2,7 +2,6 @@ package services
 
 import (
 	"errors"
-	"gopkg.in/gomail.v2"
 
 	otp "go-blog-api/internal/otp/services"
 	user "go-blog-api/internal/user/services"
@@ -31,7 +30,6 @@ func (auth AuthService) SignUp(data interface{}) {
 func (auth AuthService) SignIn() {
 	// TODO
 	
-
 }
 
 func (auth AuthService) GetOtpViaEmail(email string) (string, error) {
@@ -52,19 +50,6 @@ func (auth AuthService) GetOtpViaEmail(email string) (string, error) {
 	}
 
 	// send otp via email
-	m := gomail.NewMessage()
-	m.SetHeader("From", "kaungkhantzaw235@gmail.com")
-	m.SetHeader("To", "apipostman20@gmail.com")
-	m.SetHeader("Subject", "Test Email")
-	m.SetBody("text/plain", "This is a test email sent from Go.")
-
-	d := gomail.NewDialer("smtp.gmail.com", 465, "kaungkhantzaw235@gmail.com", "iswaiiinzwvwphbf")
-
-	if err := d.DialAndSend(m); err != nil {
-		panic(err)
-	}
-
-	println("Email sent successfully!")
 
 	return otp, nil
 }
