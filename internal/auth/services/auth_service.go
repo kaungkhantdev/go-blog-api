@@ -39,9 +39,6 @@ func (auth AuthService) SignIn() {
 }
 
 func (auth AuthService) GetOtpViaEmail(email string) (string, error) {
-	// TODO
-	// get email
-
 	hasEmail, _ := auth.otpService.GetOtpByEmail(email)
 
 	// check email it's ald exit or not
@@ -75,7 +72,7 @@ func (auth AuthService) GetOtpViaEmail(email string) (string, error) {
 		return "", errors.New("failed to send OTP")
 	}
 	
-	return otp, nil
+	return "Otp code has just sent.", nil
 }
 
 func (auth AuthService) VerifyOtpViaEmail() {
