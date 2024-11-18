@@ -50,17 +50,29 @@ func (handler *AuthHandler) VerifyOtpViaEmail(context *gin.Context) {
 	var input requests.AuthVerifyOtpRequest
 
 	if err := context.ShouldBindJSON(&input); err != nil {
-		context.JSON(http.StatusBadRequest, gin.H{"error": "Invalid inputs"})
+		utils.ErrorResponse(context, "Invalid inputs", http.StatusBadRequest)
 		return
 	}
 
 	if err := validator.ValidateStruct(&input); err != nil {
-		context.JSON(http.StatusBadRequest, gin.H{"error": "Input field is missing."})
+		utils.ErrorResponse(context, "Input field is missing.", http.StatusBadRequest)
 		return
 	}
 
-	context.JSON(http.StatusAccepted, gin.H{"data": input})
+	inputData := map[string]string{
+		"otp": input.Otp,
+		"email": input.Email,
+	}
 
+	data, err := handler.authService.VerifyOtpViaEmail(inputData)
+
+	if err != nil {
+		utils.ErrorResponse(context, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+
+	utils.SuccessResponse(context, data, "success", http.StatusOK)
 }
 
 

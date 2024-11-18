@@ -3,9 +3,17 @@ package services
 import (
 	"errors"
 	"log"
+	"time"
+
+	otpModel "go-blog-api/internal/otp/models"
 
 	otp "go-blog-api/internal/otp/services"
+
+	userModel "go-blog-api/internal/user/models"
+
 	user "go-blog-api/internal/user/services"
+
+	jwt "go-blog-api/pkg/jwt"
 	mail "go-blog-api/pkg/mail"
 
 	generateOtp "go-blog-api/pkg/generate_otp"
@@ -52,6 +60,16 @@ func (auth AuthService) GetOtpViaEmail(email string) (string, error) {
 		return "", errors.New("otp generate error")
 	}
 
+	// create new email with otp
+	otpData := otpModel.Otp{
+		Email: email,
+		Otp: otp,
+	}
+	_, err = auth.otpService.CreateOtp(&otpData)
+	if err != nil {
+		return "", errors.New("otp create error")
+	}
+
 	data := map[string]string{
 		"OTP": otp,
 	}
@@ -75,13 +93,59 @@ func (auth AuthService) GetOtpViaEmail(email string) (string, error) {
 	return "Otp code has just sent.", nil
 }
 
-func (auth AuthService) VerifyOtpViaEmail() {
+func (auth AuthService) VerifyOtpViaEmail(data map[string]string) (string, error) {
+
+	email, hasEmail := data["email"];
+	otp, hasOtp		:= data["otp"]
+
+	if !hasEmail || !hasOtp {
+		return "", errors.New("email or otp is missing")
+	}
+
 	// TODO
 	// get email
-	// get otp
+	storedOtp, err := auth.otpService.GetOtpByEmail(email)
+
+	if err != nil {
+		return "", errors.New("error fetching OTP record")
+	}
+
+	// check email it's ald exit or not
+	if storedOtp.Email == "" {
+		return "", errors.New("email has not exit")
+	}
+
 	// check otp is valid or not
+	if storedOtp.Otp != otp {
+        return "", errors.New("invalid OTP")
+    }
+
+	// user exist in user table
+	oldUser, _ := auth.userService.FindByEmailUser(email)
+
+	if oldUser.Email != "" {
+		return "", errors.New("user already exist")
+	}
+
 	// if valid then create user, just email
-	// add verify at in user's
+	user := userModel.User{ 
+		Email: email,
+		VerifyAt: time.Now(),
+	}
+
+	newUser, err := auth.userService.CreateUser(&user)
+
+	if err != nil {
+		return "", errors.New("failed to create user")
+	}
+
+	token, err := jwt.GenerateJWT(newUser.ID)
+
+	if err != nil {
+		return "", errors.New(err.Error())
+	}
+
+	return token, nil
 
 }
 

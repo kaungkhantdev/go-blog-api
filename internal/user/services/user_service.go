@@ -30,3 +30,11 @@ func (service *UserService) FindOneById(id int) (models.User, error) {
 	}
 	return user, nil
 }
+
+func (service *UserService) FindByEmailUser(email string) (models.User, error) {
+	user, err := service.repo.FindByEmailUser(email);
+	if err != nil {
+		return models.User{}, err
+	}
+	return user, nil
+}

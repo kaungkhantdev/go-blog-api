@@ -30,3 +30,12 @@ func (repo *UserRepository) FindByIdUser(id int) (models.User, error) {
 	}
 	return user, nil
 }
+
+func (repo *UserRepository) FindByEmailUser(email string) (models.User, error) {
+	var user models.User
+	if err := repo.db.Where("email = ?", email).First(&user).Error; err != nil {
+		return models.User{}, err
+	}
+	return user, nil
+}
+
