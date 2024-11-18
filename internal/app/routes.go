@@ -38,6 +38,7 @@ func (s *Server) AuthRoutes(router *gin.RouterGroup, deps *Dependencies) {
 	authRoute.POST("/get-otp", deps.AuthHandler.GetOtpViaEmail)
 	authRoute.POST("/verify-otp", deps.AuthHandler.VerifyOtpViaEmail)
 	authRoute.POST("/sign-up", deps.AuthHandler.SignUp)
+	authRoute.POST("/sign-in", deps.AuthHandler.SignIn)
 }
 
 func (s *Server) UserRoutes(router *gin.RouterGroup, deps *Dependencies) {
