@@ -136,7 +136,7 @@ func (auth AuthService) VerifyOtpViaEmail(data map[string]string) (string, error
 	// if valid then create user, just email
 	user := userModel.User{ 
 		Email: email,
-		VerifyAt: time.Now(),
+		VerifyAt: time.Now().Unix(),
 	}
 
 	newUser, err := auth.userService.CreateUser(&user)
