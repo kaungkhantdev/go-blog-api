@@ -8,6 +8,8 @@ import (
 func main() {
 	fmt.Println("hello, I am GO")
 
+	
+
 	server := app.NewServer()
 
 	fmt.Println("Server address: ", server.Addr)

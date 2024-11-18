@@ -4,6 +4,8 @@ import (
 	"go-blog-api/database"
 	"go-blog-api/pkg/validator"
 
+	mail "go-blog-api/pkg/mail"
+
 	otpRepo 	"go-blog-api/internal/otp/repository"
 	otpService "go-blog-api/internal/otp/services"
 	
@@ -28,6 +30,12 @@ func NewAppDependencies() (*Dependencies, error) {
 		return nil, err
 	}
 
+	
+	// Create an instance of EmailService
+	emailConfig := mail.NewEmailConfig()
+	emailService := mail.NewEmailService(emailConfig)
+
+
 	// init validator
 	validator.InitValidator()
 
@@ -39,7 +47,7 @@ func NewAppDependencies() (*Dependencies, error) {
 	UserHandler := userHandler.NewUserHandler(UserService)
 	
 	// auth
-	AuthService := authService.NewAuthService(OtpService, UserService)
+	AuthService := authService.NewAuthService(OtpService, UserService, emailService)
 	AuthHandler := authHandler.NewAuthHandler(AuthService)
 
 	return &Dependencies{
