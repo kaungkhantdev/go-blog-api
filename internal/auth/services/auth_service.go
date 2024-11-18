@@ -37,7 +37,14 @@ func NewAuthService(
 	}
 }
 
-func (auth AuthService) SignUp(data interface{}) {
+func (auth AuthService) SignUp() {
+	// Todo
+
+	// Check email it's ald exit or not with user id ( user_id come from token - middleware )
+
+	// Update user data
+
+	// Return token
 
 }
 
