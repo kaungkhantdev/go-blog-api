@@ -37,13 +37,20 @@ func NewAuthService(
 	}
 }
 
-func (auth AuthService) SignUp(data interface{}) {
+func (auth AuthService) SignUp() {
+	// Todo
+
+	// Check email it's ald exit or not with user id ( user_id come from token - middleware )
+
+	// Update user data
+
+	// Return token
 
 }
 
-func (auth AuthService) SignIn() {
+func (auth AuthService) SignIn() int64 {
 	// TODO
-	
+	return time.Now().Unix()
 }
 
 func (auth AuthService) GetOtpViaEmail(email string) (string, error) {
@@ -64,6 +71,7 @@ func (auth AuthService) GetOtpViaEmail(email string) (string, error) {
 	otpData := otpModel.Otp{
 		Email: email,
 		Otp: otp,
+		ExpiresAt: time.Now().Add( 1 * time.Minute).Unix(),
 	}
 	_, err = auth.otpService.CreateOtp(&otpData)
 	if err != nil {
@@ -115,6 +123,11 @@ func (auth AuthService) VerifyOtpViaEmail(data map[string]string) (string, error
 		return "", errors.New("email has not exit")
 	}
 
+	// check otp expires
+	if storedOtp.ExpiresAt < time.Now().Unix() {
+		return "", errors.New("otp has expired")
+	}
+
 	// check otp is valid or not
 	if storedOtp.Otp != otp {
         return "", errors.New("invalid OTP")
@@ -130,7 +143,7 @@ func (auth AuthService) VerifyOtpViaEmail(data map[string]string) (string, error
 	// if valid then create user, just email
 	user := userModel.User{ 
 		Email: email,
-		VerifyAt: time.Now(),
+		VerifyAt: time.Now().Unix(),
 	}
 
 	newUser, err := auth.userService.CreateUser(&user)

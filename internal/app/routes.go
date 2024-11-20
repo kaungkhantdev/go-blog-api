@@ -1,6 +1,7 @@
 package app
 
 import (
+	"go-blog-api/internal/middleware"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -37,7 +38,8 @@ func (s *Server) AuthRoutes(router *gin.RouterGroup, deps *Dependencies) {
 	authRoute := router.Group("/auth")
 	authRoute.POST("/get-otp", deps.AuthHandler.GetOtpViaEmail)
 	authRoute.POST("/verify-otp", deps.AuthHandler.VerifyOtpViaEmail)
-	authRoute.POST("/sign-up", deps.AuthHandler.SignUp)
+	authRoute.POST("/sign-up", middleware.AuthMiddleware(),  deps.AuthHandler.SignUp)
+	authRoute.POST("/sign-in", middleware.AuthMiddleware(), deps.AuthHandler.SignIn)
 }
 
 func (s *Server) UserRoutes(router *gin.RouterGroup, deps *Dependencies) {

@@ -91,3 +91,10 @@ func (handler *AuthHandler) SignUp(context *gin.Context) {
 
 	context.JSON(http.StatusOK, gin.H{"data": inputs})
 }
+
+
+func (handler *AuthHandler) SignIn(context *gin.Context) {
+
+	data := handler.authService.SignIn()
+	context.JSON(http.StatusOK, gin.H{"data": data})
+}
