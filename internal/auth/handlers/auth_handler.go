@@ -80,21 +80,80 @@ func (handler *AuthHandler) SignUp(context *gin.Context) {
 	var inputs requests.AuthSignUpRequest
 
 	if err := context.ShouldBindJSON(&inputs); err != nil {
-		context.JSON(http.StatusBadRequest, gin.H{"error": "Invalid inputs"})
+		utils.ErrorResponse(context, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	if err := validator.ValidateStruct(&inputs); err != nil {
-		context.JSON(http.StatusBadRequest, gin.H{"error": "Some field is missing."})
+		utils.ErrorResponse(context, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	context.JSON(http.StatusOK, gin.H{"data": inputs})
+	inputData :=  map[string]string{
+		"email": inputs.Email,
+		"name": inputs.Name,
+		"user_name": inputs.UserName,
+		"avatar_url": inputs.AvatarUrl,
+		"bio": inputs.Bio,
+	}
+
+	data, err := handler.authService.SignUp(inputData)
+	if err != nil {
+		utils.ErrorResponse(context, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	utils.SuccessResponse(context, data, "success", http.StatusOK)
 }
 
 
 func (handler *AuthHandler) SignIn(context *gin.Context) {
 
-	data := handler.authService.SignIn()
-	context.JSON(http.StatusOK, gin.H{"data": data})
+	var inputs requests.AuthOtpRequest
+
+	if err := context.ShouldBindJSON(&inputs); err != nil {
+		utils.ErrorResponse(context, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	if err := validator.ValidateStruct(&inputs); err != nil {
+		utils.ErrorResponse(context, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	data, err := handler.authService.SignIn(inputs.Email)
+	if err != nil {
+		utils.ErrorResponse(context, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	utils.SuccessResponse(context, data, "success", http.StatusOK)
+}
+
+func (handler *AuthHandler) SignInVerify(context *gin.Context) {
+
+	var inputs requests.AuthVerifyOtpRequest
+
+	if err := context.ShouldBindJSON(&inputs); err != nil {
+		utils.ErrorResponse(context, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	if err := validator.ValidateStruct(&inputs); err != nil {
+		utils.ErrorResponse(context, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	inputData := map[string]string{
+		"email":    inputs.Email,
+		"otp":      inputs.Otp,
+	}
+
+	data, err := handler.authService.VerifyOtpViaEmailSignIn(inputData)
+	if err != nil {
+		utils.ErrorResponse(context, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	utils.SuccessResponse(context, data, "success", http.StatusOK)
 }

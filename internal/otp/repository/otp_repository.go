@@ -32,12 +32,13 @@ func (repo *OtpRepository) GetOtpByEmail(email string) (models.Otp, error) {
 	return otpData, nil
 }
 
-func (repo *OtpRepository) UpdateOtpByEmail(email, otp string) (models.Otp, error) {
+func (repo *OtpRepository) UpdateOtpByEmail(email, otp string, expireAt int64) (models.Otp, error) {
 	var otpData models.Otp
 	if err := repo.db.Where("email = ?", email).First(&otpData).Error; err != nil {
 		return models.Otp{}, err
 	}
-	otpData.Otp = otp;
+	otpData.Otp = otp
+	otpData.ExpiresAt = expireAt
 	if err := repo.db.Save(&otpData).Error; err != nil {
         return models.Otp{}, err
     }
