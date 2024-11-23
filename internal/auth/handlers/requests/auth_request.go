@@ -4,7 +4,7 @@ package requests
 type AuthSignUpRequest struct {
 	Name      string `json:"name" validate:"required,min=1"`
 	Email     string `json:"email" validate:"required,email"`
-	UserName  string `json:"name" validate:"required,min=1"`
+	UserName  string `json:"user_name"`
 	AvatarUrl string `json:"avatar_url"`
 	Bio       string `json:"bio"`
 }
@@ -14,6 +14,6 @@ type AuthOtpRequest struct {
 }
 
 type AuthVerifyOtpRequest struct {
-	Email   string `json:"email" validate:"required,email"`
-	Otp     string `json:"otp" validate:"required"`
+	Email   	string `json:"email" validate:"required,email"`
+	Otp     	string `json:"otp" validate:"required"`
 }
