@@ -20,28 +20,43 @@ func NewAuthHandler(authService *services.AuthService) *AuthHandler {
 	}
 }
 
-func (handler *AuthHandler) GetOtpViaEmail(context *gin.Context) {
-	var input requests.AuthOtpRequest
+// Helper Methods
 
-	if err := context.ShouldBindJSON(&input); err != nil {
+func (handler *AuthHandler) bindAndValidate(context *gin.Context, input interface{}) error {
+	if err := context.ShouldBindJSON(input); err != nil {
 		utils.ErrorResponse(context, err.Error(), http.StatusBadRequest)
-		return
+		return err
 	}
 
-	if err := validator.ValidateStruct(&input); err != nil {
+	if err := validator.ValidateStruct(input); err != nil {
 		utils.ErrorResponse(context, "Email field is missing.", http.StatusBadRequest)
-		return
+		return err
 	}
 
-	data, err := handler.authService.GetOtpViaEmail(input.Email)
+	return nil
 
+}
 
+func (handler *AuthHandler) handleResponse(context *gin.Context, message string, data interface{}, err error) {
 	if err != nil {
 		utils.ErrorResponse(context, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	utils.SuccessResponse(context, "", data, http.StatusOK)
+	utils.SuccessResponse(context, data, message, http.StatusOK)
+}
+
+// Methods
+
+func (handler *AuthHandler) GetOtpViaEmail(context *gin.Context) {
+	var input requests.AuthOtpRequest
+
+	if handler.bindAndValidate(context, &input) != nil {
+		return
+	}
+
+	data, err := handler.authService.GetOtpViaEmail(input.Email)
+	handler.handleResponse(context, "Success", data, err)
 }
 
 
@@ -49,13 +64,7 @@ func (handler *AuthHandler) VerifyOtpViaEmail(context *gin.Context) {
 
 	var input requests.AuthVerifyOtpRequest
 
-	if err := context.ShouldBindJSON(&input); err != nil {
-		utils.ErrorResponse(context, "Invalid inputs", http.StatusBadRequest)
-		return
-	}
-
-	if err := validator.ValidateStruct(&input); err != nil {
-		utils.ErrorResponse(context, err.Error(), http.StatusBadRequest)
+	if handler.bindAndValidate(context, &input) != nil {
 		return
 	}
 
@@ -65,27 +74,14 @@ func (handler *AuthHandler) VerifyOtpViaEmail(context *gin.Context) {
 	}
 
 	data, err := handler.authService.VerifyOtpViaEmail(inputData)
-
-	if err != nil {
-		utils.ErrorResponse(context, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-
-	utils.SuccessResponse(context, data, "success", http.StatusOK)
+	handler.handleResponse(context, "Success", data, err)
 }
 
 
 func (handler *AuthHandler) SignUp(context *gin.Context) {
 	var inputs requests.AuthSignUpRequest
 
-	if err := context.ShouldBindJSON(&inputs); err != nil {
-		utils.ErrorResponse(context, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	if err := validator.ValidateStruct(&inputs); err != nil {
-		utils.ErrorResponse(context, err.Error(), http.StatusBadRequest)
+	if handler.bindAndValidate(context, &inputs) != nil {
 		return
 	}
 
@@ -98,12 +94,7 @@ func (handler *AuthHandler) SignUp(context *gin.Context) {
 	}
 
 	data, err := handler.authService.SignUp(inputData)
-	if err != nil {
-		utils.ErrorResponse(context, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	utils.SuccessResponse(context, data, "success", http.StatusOK)
+	handler.handleResponse(context, "Success", data, err)
 }
 
 
@@ -111,21 +102,10 @@ func (handler *AuthHandler) SignIn(context *gin.Context) {
 
 	var inputs requests.AuthOtpRequest
 
-	if err := context.ShouldBindJSON(&inputs); err != nil {
-		utils.ErrorResponse(context, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	if err := validator.ValidateStruct(&inputs); err != nil {
-		utils.ErrorResponse(context, err.Error(), http.StatusBadRequest)
+	if handler.bindAndValidate(context, &inputs) != nil {
 		return
 	}
 
 	data, err := handler.authService.SignIn(inputs.Email)
-	if err != nil {
-		utils.ErrorResponse(context, err.Error(), http.StatusBadRequest)
-		return
-	}
-
-	utils.SuccessResponse(context, data, "success", http.StatusOK)
+	handler.handleResponse(context, "Success", data, err)
 }
