@@ -7,29 +7,27 @@ import (
 	"time"
 
 	otpModel "go-blog-api/internal/otp/models"
-
-	otp "go-blog-api/internal/otp/services"
+	otpService "go-blog-api/internal/otp/services"
 
 	userModel "go-blog-api/internal/user/models"
+	userService "go-blog-api/internal/user/services"
 
-	user "go-blog-api/internal/user/services"
-
-	jwt "go-blog-api/pkg/jwt"
-	mail "go-blog-api/pkg/mail"
+	jwtService "go-blog-api/pkg/jwt"
+	mailService "go-blog-api/pkg/mail"
 
 	generateOtp "go-blog-api/pkg/generate_otp"
 )
 
 type AuthService struct {
-	otpService  *otp.OtpService
-	userService *user.UserService
-	mailService *mail.EmailService
+	otpService  *otpService.OtpService
+	userService *userService.UserService
+	mailService *mailService.EmailService
 }
 
 func NewAuthService(
-	otpService *otp.OtpService,
-	userService *user.UserService,
-	mailService *mail.EmailService,
+	otpService *otpService.OtpService,
+	userService *userService.UserService,
+	mailService *mailService.EmailService,
 ) *AuthService {
 	return &AuthService{
 		otpService:  otpService,
@@ -152,7 +150,7 @@ func (auth AuthService) SignUp(data map[string]string) (map[string]string, error
 		return resObj, errors.New(err.Error())
 	}
 
-	token, err := jwt.GenerateJWT(updateUser.ID)
+	token, err := jwtService.GenerateJWT(updateUser.ID)
 	if err != nil {
 		return resObj, errors.New(err.Error())
 	}
@@ -232,7 +230,7 @@ func (auth AuthService) VerifyOtpViaEmail(data map[string]string) (map[string]st
 
 		return auth.authBuildRes(newUser, "")
 	} else {
-		token, err := jwt.GenerateJWT(oldUser.ID)
+		token, err := jwtService.GenerateJWT(oldUser.ID)
 		if err != nil {
 			return resObj, errors.New(err.Error())
 		}
