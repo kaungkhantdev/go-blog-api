@@ -32,8 +32,8 @@ func (service *OtpService) GetOtpByEmail(email string) (models.Otp, error) {
 	return otp, nil
 }
 
-func (service *OtpService) UpdateOtpByEmail(email, otp string) (models.Otp, error) {
-	updatedOtp, err := service.repo.UpdateOtpByEmail(email, otp)
+func (service *OtpService) UpdateOtpByEmail(email, otp string, expireAt int64) (models.Otp, error) {
+	updatedOtp, err := service.repo.UpdateOtpByEmail(email, otp, expireAt)
 
 	if err != nil {
 		return models.Otp{}, err

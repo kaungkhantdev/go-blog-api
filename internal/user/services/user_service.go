@@ -38,3 +38,21 @@ func (service *UserService) FindByEmailUser(email string) (models.User, error) {
 	}
 	return user, nil
 }
+
+func (service *UserService) FindByUserName(userName string) (models.User, error) {
+	user, err := service.repo.FindByUserName(userName);
+	if err != nil {
+		return models.User{}, err
+	}
+	return user, nil
+}
+
+
+
+func (service *UserService) UpdateUser(id int, data *models.User) (models.User, error) {
+	updateUser, err := service.repo.UpdateUser(id, data)
+	if err != nil {
+		return models.User{}, err
+	}
+	return updateUser, nil
+}

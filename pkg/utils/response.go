@@ -7,7 +7,7 @@ import (
 type Response struct {
 	Status		int			`json:"status"`
 	Message		string		`json:"message"`
-	Data		interface{}	`json:"data,omitempty"`
+	Data		interface{}	`json:"data"`
 }
 
 func SuccessResponse(context *gin.Context, data interface{}, message string, status int) {
