@@ -10,7 +10,9 @@ import (
 
 	_ "github.com/joho/godotenv/autoload"
 
+	iconModel "go-blog-api/internal/icon/models"
 	otpModel "go-blog-api/internal/otp/models"
+	tagModel "go-blog-api/internal/tag/models"
 	userModel "go-blog-api/internal/user/models"
 )
 
@@ -37,7 +39,7 @@ func Connect() (*gorm.DB, error) {
 	log.Println("Successfully connected to the database.")
 
 	// Run AutoMigrate
-	autoMigrateDB := DB.AutoMigrate(&userModel.User{}, &otpModel.Otp{})
+	autoMigrateDB := DB.AutoMigrate(&userModel.User{}, &otpModel.Otp{}, &iconModel.Icon{}, &tagModel.Tag{})
 	if err := autoMigrateDB; err != nil {
 		log.Fatalf("Failed to auto-migrate: %v", err)
 	}

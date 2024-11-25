@@ -21,7 +21,7 @@ import (
 )
 
 type AuthService struct {
-	otpService *otp.OtpService
+	otpService  *otp.OtpService
 	userService *user.UserService
 	mailService *mail.EmailService
 }
@@ -32,7 +32,7 @@ func NewAuthService(
 	mailService *mail.EmailService,
 ) *AuthService {
 	return &AuthService{
-		otpService: otpService,
+		otpService:  otpService,
 		userService: userService,
 		mailService: mailService,
 	}
@@ -41,21 +41,20 @@ func NewAuthService(
 // Helper Methods
 
 func (auth AuthService) defineExpire() int64 {
-	return time.Now().Add( 1 * time.Minute).Unix()
+	return time.Now().Add(1 * time.Minute).Unix()
 }
-
 
 func (auth AuthService) authBuildRes(user userModel.User, token string) (map[string]string, error) {
 	return map[string]string{
-		"email": user.Email,
+		"email":     user.Email,
 		"user_name": user.UserName,
-		"token": token,
+		"token":     token,
 	}, nil
 }
 
 func (auth AuthService) authCreateUser(email string) (userModel.User, error) {
-	user := userModel.User{ 
-		Email: email,
+	user := userModel.User{
+		Email:    email,
 		UserName: strings.Split(email, "@")[0],
 		VerifyAt: time.Now().Unix(),
 	}
@@ -70,15 +69,15 @@ func (auth AuthService) authCreateUser(email string) (userModel.User, error) {
 
 func (auth AuthService) authCreateOtp(email, otp string) (string, error) {
 	otpData := otpModel.Otp{
-		Email: email,
-		Otp: otp,
+		Email:     email,
+		Otp:       otp,
 		ExpiresAt: auth.defineExpire(),
 	}
 	_, err := auth.otpService.CreateOtp(&otpData)
 	if err != nil {
 		return "", errors.New("otp create error")
-	}	
-	
+	}
+
 	return "", nil
 }
 
@@ -111,22 +110,22 @@ func (auth AuthService) authSendOtpEmail(otp, email string) (string, error) {
 		log.Printf("Failed to send OTP via email: %v", err)
 		return "", errors.New("failed to send OTP")
 	}
-	
+
 	return "Otp code has just sent.", nil
 }
 
 func (auth AuthService) authPrepareUserData(data map[string]string) userModel.User {
 	return userModel.User{
-		Name:      data["name"],
-		UserName:  data["user_name"],
-		AvatarUrl: data["avatar_url"],
-		Bio:       data["bio"],
+		Name:     data["name"],
+		UserName: data["user_name"],
+		Avatar:   data["avatar"],
+		Bio:      data["bio"],
 	}
 }
 
 // Methods
 
-func (auth AuthService) SignUp (data map[string]string) (map[string]string, error) {
+func (auth AuthService) SignUp(data map[string]string) (map[string]string, error) {
 	email, hasEmail := data["email"]
 	resObj := map[string]string{}
 
@@ -177,14 +176,14 @@ func (auth AuthService) GetOtpViaEmail(email string) (string, error) {
 
 	// generate otp
 	otp, err := generateOtp.GenerateOtp(6)
-	if err != nil { 
+	if err != nil {
 		return "", errors.New("otp generate error")
 	}
-	
+
 	// check email it's ald exit or not
 	if hasEmail.Email == "" {
 		// create new email with otp
-		auth.authCreateOtp(email, otp)		
+		auth.authCreateOtp(email, otp)
 	} else {
 		// update otp
 		auth.authUpdateOtp(email, otp)
@@ -196,13 +195,12 @@ func (auth AuthService) GetOtpViaEmail(email string) (string, error) {
 func (auth AuthService) VerifyOtpViaEmail(data map[string]string) (map[string]string, error) {
 
 	email, hasEmail := data["email"]
-	otp, hasOtp		:= data["otp"]
+	otp, hasOtp := data["otp"]
 	resObj := map[string]string{}
 
 	if !hasEmail || !hasOtp {
 		return resObj, errors.New("something is missing")
 	}
-
 
 	storedOtp, err := auth.otpService.GetOtpByEmail(email)
 	if err != nil {
@@ -221,8 +219,8 @@ func (auth AuthService) VerifyOtpViaEmail(data map[string]string) (map[string]st
 
 	// check otp is valid or not
 	if storedOtp.Otp != otp {
-        return resObj, errors.New("invalid OTP")
-    }
+		return resObj, errors.New("invalid OTP")
+	}
 
 	// user exist in user table
 	oldUser, _ := auth.userService.FindByEmailUser(email)
@@ -231,14 +229,14 @@ func (auth AuthService) VerifyOtpViaEmail(data map[string]string) (map[string]st
 		if err != nil {
 			return map[string]string{}, errors.New("failed to create user")
 		}
-	
+
 		return auth.authBuildRes(newUser, "")
 	} else {
 		token, err := jwt.GenerateJWT(oldUser.ID)
 		if err != nil {
 			return resObj, errors.New(err.Error())
 		}
-	
+
 		return auth.authBuildRes(oldUser, token)
 	}
 
