@@ -59,7 +59,6 @@ func (handler *AuthHandler) GetOtpViaEmail(context *gin.Context) {
 	handler.handleResponse(context, "Success", data, err)
 }
 
-
 func (handler *AuthHandler) VerifyOtpViaEmail(context *gin.Context) {
 
 	var input requests.AuthVerifyOtpRequest
@@ -69,14 +68,13 @@ func (handler *AuthHandler) VerifyOtpViaEmail(context *gin.Context) {
 	}
 
 	inputData := map[string]string{
-		"otp": input.Otp,
+		"otp":   input.Otp,
 		"email": input.Email,
 	}
 
 	data, err := handler.authService.VerifyOtpViaEmail(inputData)
 	handler.handleResponse(context, "Success", data, err)
 }
-
 
 func (handler *AuthHandler) SignUp(context *gin.Context) {
 	var inputs requests.AuthSignUpRequest
@@ -85,18 +83,17 @@ func (handler *AuthHandler) SignUp(context *gin.Context) {
 		return
 	}
 
-	inputData :=  map[string]string{
-		"email": inputs.Email,
-		"name": inputs.Name,
+	inputData := map[string]string{
+		"email":     inputs.Email,
+		"name":      inputs.Name,
 		"user_name": inputs.UserName,
-		"avatar_url": inputs.AvatarUrl,
-		"bio": inputs.Bio,
+		"avatar":    inputs.Avatar,
+		"bio":       inputs.Bio,
 	}
 
 	data, err := handler.authService.SignUp(inputData)
 	handler.handleResponse(context, "Success", data, err)
 }
-
 
 func (handler *AuthHandler) SignIn(context *gin.Context) {
 
