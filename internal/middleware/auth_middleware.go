@@ -3,9 +3,10 @@ package middleware
 import (
 	"net/http"
 	"strings"
-	
+
 	"go-blog-api/pkg/jwt"
 	"go-blog-api/pkg/utils"
+
 	"github.com/gin-gonic/gin"
 )
 
@@ -18,15 +19,15 @@ func AuthMiddleware() gin.HandlerFunc {
 			ctx.Abort()
 			return
 		}
-		
+
 		tokenString := strings.TrimPrefix(authHeader, "Bearer ")
 		if tokenString == authHeader {
 			utils.ErrorResponse(ctx, "Bearer token required", http.StatusUnauthorized)
 			ctx.Abort()
 			return
 		}
-		
-		claims, err := jwt.VerifyJWT(tokenString)
+
+		claims, err := jwt.VerifyJWT(tokenString, jwt.GetJWTSecret())
 		if err != nil {
 			utils.ErrorResponse(ctx, "Invalid token", http.StatusUnauthorized)
 			ctx.Abort()
