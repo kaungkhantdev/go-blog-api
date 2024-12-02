@@ -9,7 +9,7 @@ import (
 )
 
 type Claims struct {
-	UserId int	`json:"user_id"`
+	UserId int `json:"user_id"`
 	jwt.RegisteredClaims
 }
 
@@ -17,8 +17,19 @@ func GetJWTSecret() []byte {
 	return []byte(os.Getenv("JWT_SECRET"))
 }
 
-func GetJWTExpiration() time.Duration {
-	expirationMinutes := os.Getenv("JWT_EXPIRATION_MINUTES")
+func GetJWTAccessTokenSecret() []byte {
+	return []byte(os.Getenv("JWT_ACCESS_TOKEN_SECRET"))
+}
+
+func GetJWTExpireMinutes() string {
+	return os.Getenv("JWT_EXPIRATION_MINUTES")
+}
+
+func GetJWTAccessTokenExpireMinutes() string {
+	return os.Getenv("JWT_ACCESS_TOKEN_EXPIRATION_MINUTES")
+}
+
+func GetJWTExpiration(expirationMinutes string) time.Duration {
 	expirationTime, err := time.ParseDuration(expirationMinutes + "m")
 
 	if err != nil {
@@ -29,8 +40,8 @@ func GetJWTExpiration() time.Duration {
 	return expirationTime
 }
 
-func GenerateJWT(userId int) (string, error) {
-	expirationTime := time.Now().Add(GetJWTExpiration())
+func GenerateJWT(userId int, secret []byte, expirationMinutes string) (string, error) {
+	expirationTime := time.Now().Add(GetJWTExpiration(expirationMinutes))
 
 	claims := &Claims{
 		UserId: userId,
@@ -40,14 +51,14 @@ func GenerateJWT(userId int) (string, error) {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	return token.SignedString(GetJWTSecret())
+	return token.SignedString(secret)
 }
 
-func VerifyJWT(tokenString string) (*Claims, error) {
+func VerifyJWT(tokenString string, secret []byte) (*Claims, error) {
 	claims := &Claims{}
 
 	token, err := jwt.ParseWithClaims(tokenString, claims, func(t *jwt.Token) (interface{}, error) {
-		return GetJWTSecret(), nil
+		return secret, nil
 	})
 
 	if err != nil {
@@ -60,6 +71,6 @@ func VerifyJWT(tokenString string) (*Claims, error) {
 	if !token.Valid {
 		return nil, fmt.Errorf("invalid token")
 	}
-	
+
 	return claims, nil
 }
