@@ -1,6 +1,7 @@
 package app
 
 import (
+	authMiddleware "go-blog-api/internal/middleware"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -16,9 +17,9 @@ func (s *Server) RegisterRoutes() http.Handler {
 
 	routerGroup := route.Group("/api/v1")
 	router, deps := s.InitRoutes(routerGroup)
-	s.UserRoutes(router, deps)
 
 	s.AuthRoutes(router, deps)
+	s.UserRoutes(router, deps)
 
 	return route
 }
@@ -44,5 +45,5 @@ func (s *Server) AuthRoutes(router *gin.RouterGroup, deps *Dependencies) {
 
 func (s *Server) UserRoutes(router *gin.RouterGroup, deps *Dependencies) {
 	userRouter := router.Group("/user")
-	userRouter.GET("/:id", deps.UserHandler.FindOneByID)
+	userRouter.GET("/:id", authMiddleware.AuthMiddleware(), deps.UserHandler.FindOneByID)
 }

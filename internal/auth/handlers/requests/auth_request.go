@@ -18,5 +18,5 @@ type AuthVerifyOtpRequest struct {
 }
 
 type VerifyRefreshTokenRequest struct {
-	Token string `json:"token" validate:"required"`
+	RefreshToken string `json:"refresh_token" validate:"required"`
 }

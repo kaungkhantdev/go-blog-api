@@ -151,10 +151,16 @@ func (auth AuthService) SignUp(data map[string]string) (map[string]string, error
 		return resObj, errors.New("email is required")
 	}
 
+	// has email in otp
+	optUser, _ := auth.otpService.GetOtpByEmail(email)
+	if optUser.Email == "" {
+		return resObj, errors.New("please, verify email first.")
+	}
+
 	// user exist in user table
 	oldUser, _ := auth.userService.FindByEmailUser(email)
-	if oldUser.Email == "" {
-		return resObj, errors.New("email invalid")
+	if oldUser.Email != "" {
+		return resObj, errors.New("email already taken")
 	}
 
 	user := auth.authPrepareUserData(data)

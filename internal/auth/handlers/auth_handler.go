@@ -115,6 +115,6 @@ func (handler *AuthHandler) VerifyRefreshToken(context *gin.Context) {
 		return
 	}
 
-	data, err := handler.authService.VerifyRefreshToken(inputs.Token)
+	data, err := handler.authService.VerifyRefreshToken(inputs.RefreshToken)
 	handler.handleResponse(context, "Success", data, err)
 }
