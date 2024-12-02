@@ -12,6 +12,7 @@ import (
 	userModel "go-blog-api/internal/user/models"
 	userService "go-blog-api/internal/user/services"
 
+	"go-blog-api/pkg/jwt"
 	jwtService "go-blog-api/pkg/jwt"
 	mailService "go-blog-api/pkg/mail"
 
@@ -49,7 +50,7 @@ func (auth AuthService) authBuildRes(user userModel.User, showToken bool, token 
 	}
 
 	if showToken {
-		response["token"] = token["token"]
+		response["refresh_token"] = token["refresh_token"]
 		response["access_token"] = token["access_token"]
 	}
 
@@ -128,15 +129,15 @@ func (auth AuthService) authPrepareUserData(data map[string]string) userModel.Us
 }
 
 func (auth AuthService) tokens(userId int) (map[string]string, error) {
-	token, err := jwtService.GenerateJWT(userId, jwtService.GetJWTSecret(), jwtService.GetJWTExpireMinutes())
-	accessToken, err := jwtService.GenerateJWT(userId, jwtService.GetJWTAccessTokenSecret(), jwtService.GetJWTAccessTokenExpireMinutes())
+	accessToken, err := jwtService.GenerateJWT(userId, jwtService.GetJWTSecret(), jwtService.GetJWTExpireMinutes())
+	refreshToken, err := jwtService.GenerateJWT(userId, jwtService.GetJWTAccessTokenSecret(), jwtService.GetJWTAccessTokenExpireMinutes())
 	if err != nil {
 		return map[string]string{}, errors.New(err.Error())
 	}
 
 	return map[string]string{
-		"token":        token,
-		"access_token": accessToken,
+		"access_token":  accessToken,
+		"refresh_token": refreshToken,
 	}, nil
 }
 
@@ -257,4 +258,18 @@ func (auth AuthService) VerifyOtpViaEmail(data map[string]string) (map[string]st
 		return auth.authBuildRes(oldUser, true, tokens)
 	}
 
+}
+
+func (auth AuthService) VerifyRefreshToken(token string) (map[string]string, error) {
+	claims, err := jwt.VerifyJWT(token, jwt.GetJWTAccessTokenSecret())
+	if err != nil {
+		return map[string]string{}, errors.New(err.Error())
+	}
+
+	tokens, err := auth.tokens(claims.UserId)
+	if err != nil {
+		return map[string]string{}, errors.New(err.Error())
+	}
+
+	return tokens, nil
 }

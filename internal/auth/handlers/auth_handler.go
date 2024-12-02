@@ -106,3 +106,15 @@ func (handler *AuthHandler) SignIn(context *gin.Context) {
 	data, err := handler.authService.SignIn(inputs.Email)
 	handler.handleResponse(context, "Success", data, err)
 }
+
+func (handler *AuthHandler) VerifyRefreshToken(context *gin.Context) {
+
+	var inputs requests.VerifyRefreshTokenRequest
+
+	if handler.bindAndValidate(context, &inputs) != nil {
+		return
+	}
+
+	data, err := handler.authService.VerifyRefreshToken(inputs.Token)
+	handler.handleResponse(context, "Success", data, err)
+}
