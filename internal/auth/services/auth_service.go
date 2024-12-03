@@ -12,6 +12,7 @@ import (
 	userModel "go-blog-api/internal/user/models"
 	userService "go-blog-api/internal/user/services"
 
+	"go-blog-api/pkg/jwt"
 	jwtService "go-blog-api/pkg/jwt"
 	mailService "go-blog-api/pkg/mail"
 
@@ -42,12 +43,18 @@ func (auth AuthService) defineExpire() int64 {
 	return time.Now().Add(1 * time.Minute).Unix()
 }
 
-func (auth AuthService) authBuildRes(user userModel.User, token string) (map[string]string, error) {
-	return map[string]string{
+func (auth AuthService) authBuildRes(user userModel.User, showToken bool, token map[string]string) (map[string]string, error) {
+	response := map[string]string{
 		"email":     user.Email,
 		"user_name": user.UserName,
-		"token":     token,
-	}, nil
+	}
+
+	if showToken {
+		response["refresh_token"] = token["refresh_token"]
+		response["access_token"] = token["access_token"]
+	}
+
+	return response, nil
 }
 
 func (auth AuthService) authCreateUser(email string) (userModel.User, error) {
@@ -121,6 +128,19 @@ func (auth AuthService) authPrepareUserData(data map[string]string) userModel.Us
 	}
 }
 
+func (auth AuthService) tokens(userId int) (map[string]string, error) {
+	accessToken, err := jwtService.GenerateJWT(userId, jwtService.GetJWTSecret(), jwtService.GetJWTExpireMinutes())
+	refreshToken, err := jwtService.GenerateJWT(userId, jwtService.GetJWTAccessTokenSecret(), jwtService.GetJWTAccessTokenExpireMinutes())
+	if err != nil {
+		return map[string]string{}, errors.New(err.Error())
+	}
+
+	return map[string]string{
+		"access_token":  accessToken,
+		"refresh_token": refreshToken,
+	}, nil
+}
+
 // Methods
 
 func (auth AuthService) SignUp(data map[string]string) (map[string]string, error) {
@@ -131,10 +151,16 @@ func (auth AuthService) SignUp(data map[string]string) (map[string]string, error
 		return resObj, errors.New("email is required")
 	}
 
+	// has email in otp
+	optUser, _ := auth.otpService.GetOtpByEmail(email)
+	if optUser.Email == "" {
+		return resObj, errors.New("please, verify email first.")
+	}
+
 	// user exist in user table
 	oldUser, _ := auth.userService.FindByEmailUser(email)
-	if oldUser.Email == "" {
-		return resObj, errors.New("email invalid")
+	if oldUser.Email != "" {
+		return resObj, errors.New("email already taken")
 	}
 
 	user := auth.authPrepareUserData(data)
@@ -150,12 +176,12 @@ func (auth AuthService) SignUp(data map[string]string) (map[string]string, error
 		return resObj, errors.New(err.Error())
 	}
 
-	token, err := jwtService.GenerateJWT(updateUser.ID)
+	tokens, err := auth.tokens(updateUser.ID)
 	if err != nil {
 		return resObj, errors.New(err.Error())
 	}
 
-	return auth.authBuildRes(updateUser, token)
+	return auth.authBuildRes(updateUser, true, tokens)
 }
 
 func (auth AuthService) SignIn(email string) (string, error) {
@@ -228,14 +254,28 @@ func (auth AuthService) VerifyOtpViaEmail(data map[string]string) (map[string]st
 			return map[string]string{}, errors.New("failed to create user")
 		}
 
-		return auth.authBuildRes(newUser, "")
+		return auth.authBuildRes(newUser, false, resObj)
 	} else {
-		token, err := jwtService.GenerateJWT(oldUser.ID)
+		tokens, err := auth.tokens(oldUser.ID)
 		if err != nil {
 			return resObj, errors.New(err.Error())
 		}
 
-		return auth.authBuildRes(oldUser, token)
+		return auth.authBuildRes(oldUser, true, tokens)
 	}
 
+}
+
+func (auth AuthService) VerifyRefreshToken(token string) (map[string]string, error) {
+	claims, err := jwt.VerifyJWT(token, jwt.GetJWTAccessTokenSecret())
+	if err != nil {
+		return map[string]string{}, errors.New(err.Error())
+	}
+
+	tokens, err := auth.tokens(claims.UserId)
+	if err != nil {
+		return map[string]string{}, errors.New(err.Error())
+	}
+
+	return tokens, nil
 }
