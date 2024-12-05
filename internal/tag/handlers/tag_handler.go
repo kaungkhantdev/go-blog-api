@@ -2,10 +2,10 @@ package handlers
 
 import (
 	"go-blog-api/internal/tag/handlers/requests"
-	"go-blog-api/internal/tag/models"
 	"go-blog-api/internal/tag/services"
 	"go-blog-api/pkg/utils"
 	"go-blog-api/pkg/validator"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -31,7 +31,7 @@ func (handler *TagHandler) bindAndValidate(context *gin.Context, input interface
 	}
 
 	if err := validator.ValidateStruct(input); err != nil {
-		utils.ErrorResponse(context, "Email field is missing.", http.StatusBadRequest)
+		utils.ErrorResponse(context, err.Error(), http.StatusBadRequest)
 		return err
 	}
 
@@ -56,14 +56,7 @@ func (handler *TagHandler) CreateTag(context *gin.Context) {
 		return
 	}
 
-	tag := &models.Tag{
-		Name:     input.Name,
-		UserId:   input.UserId,
-		ParentId: &input.ParentId,
-		IconId:   input.IconId,
-	}
-
-	data, err := handler.tagService.CreateTag(tag)
+	data, err := handler.tagService.CreateTag(input)
 	handler.handleResponse(context, "Success", data, err)
 }
 
@@ -76,18 +69,11 @@ func (handler *TagHandler) UpdateTag(context *gin.Context) {
 	}
 
 	var input requests.TagUpdateRequest
-	if handler.bindAndValidate(context, input) != nil {
+	if handler.bindAndValidate(context, &input) != nil {
 		return
 	}
-
-	tag := &models.Tag{
-		Name:     input.Name,
-		UserId:   input.UserId,
-		ParentId: &input.ParentId,
-		IconId:   input.IconId,
-	}
-
-	data, err := handler.tagService.UpdateTag(intId, tag)
+	log.Println("## log", input.ParentId)
+	data, err := handler.tagService.UpdateTag(intId, input)
 	handler.handleResponse(context, "Success", data, err)
 
 }

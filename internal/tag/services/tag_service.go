@@ -1,6 +1,7 @@
 package services
 
 import (
+	"go-blog-api/internal/tag/handlers/requests"
 	"go-blog-api/internal/tag/interfaces"
 	"go-blog-api/internal/tag/models"
 
@@ -15,11 +16,11 @@ func NewTagService(repo interfaces.TagRepositoryInterface) *TagService {
 	return &TagService{repo: repo}
 }
 
-func (service *TagService) CreateTag(data *models.Tag) (models.Tag, error) {
+func (service *TagService) CreateTag(data requests.TagCreateRequest) (models.Tag, error) {
 	return service.repo.CreateTag(data)
 }
 
-func (service *TagService) UpdateTag(id int, data *models.Tag) (models.Tag, error) {
+func (service *TagService) UpdateTag(id int, data requests.TagUpdateRequest) (models.Tag, error) {
 	return service.repo.UpdateTag(id, data)
 }
 

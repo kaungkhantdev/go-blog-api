@@ -26,3 +26,36 @@ func Paginate(ctx *gin.Context) func(db *gorm.DB) *gorm.DB {
 		return db.Offset(offset).Limit(pageSize)
 	}
 }
+
+// {
+//   "data": [
+//     {
+//       "id": 1,
+//       "name": "Item 1",
+//       "description": "Description for Item 1"
+//     },
+//     {
+//       "id": 2,
+//       "name": "Item 2",
+//       "description": "Description for Item 2"
+//     },
+//     {
+//       "id": 3,
+//       "name": "Item 3",
+//       "description": "Description for Item 3"
+//     }
+//   ],
+//   "meta": {
+//     "pagination": {
+//       "total": 50,
+//       "count": 3,
+//       "per_page": 3,
+//       "current_page": 1,
+//       "total_pages": 17,
+//       "links": {
+//         "next": "/api/items?page=2&page_size=3",
+//         "prev": ""
+//       }
+//     }
+//   }
+// }
