@@ -44,6 +44,14 @@ func (s *Server) AuthRoutes(router *gin.RouterGroup, deps *Dependencies) {
 }
 
 func (s *Server) UserRoutes(router *gin.RouterGroup, deps *Dependencies) {
-	userRouter := router.Group("/user")
+	userRouter := router.Group("/users")
 	userRouter.GET("/:id", authMiddleware.AuthMiddleware(), deps.UserHandler.FindOneByID)
+}
+
+func (s *Server) TagRoutes(router *gin.RouterGroup, deps *Dependencies) {
+	tagRouter := router.Group("/tags")
+	tagRouter.POST("/", authMiddleware.AuthMiddleware(), deps.TagHandler.CreateTag)
+	tagRouter.PUT("/", authMiddleware.AuthMiddleware(), deps.TagHandler.UpdateTag)
+
+	tagRouter.GET("/", deps.TagHandler.FindWithPagination)
 }

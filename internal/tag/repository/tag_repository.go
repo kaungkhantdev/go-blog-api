@@ -3,7 +3,9 @@ package repository
 import (
 	"go-blog-api/internal/tag/interfaces"
 	"go-blog-api/internal/tag/models"
+	"go-blog-api/pkg/pagination"
 
+	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
@@ -32,4 +34,13 @@ func (repo *TagRepository) UpdateTag(id int, data *models.Tag) (models.Tag, erro
 		return models.Tag{}, nil
 	}
 	return tag, nil
+}
+
+func (repo *TagRepository) FindWithPagination(ctx *gin.Context) ([]models.Tag, error) {
+	var tags []models.Tag
+	if err := repo.db.Scopes(pagination.Paginate(ctx)).Find(&tags).Error; err != nil {
+		return nil, err
+	}
+
+	return tags, nil
 }
