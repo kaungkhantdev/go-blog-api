@@ -29,7 +29,7 @@ func (handler *AuthHandler) bindAndValidate(context *gin.Context, input interfac
 	}
 
 	if err := validator.ValidateStruct(input); err != nil {
-		utils.ErrorResponse(context, "Email field is missing.", http.StatusBadRequest)
+		utils.ErrorResponse(context, err.Error(), http.StatusBadRequest)
 		return err
 	}
 
