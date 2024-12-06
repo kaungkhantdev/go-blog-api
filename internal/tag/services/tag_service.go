@@ -55,6 +55,10 @@ func (service *TagService) FindWithPagination(ctx *gin.Context) (*pagination.Pag
 	return service.repo.FindWithPagination(page, pageSize)
 }
 
+func (service *TagService) FindByIdTag(id int) (models.Tag, error) {
+	return service.repo.FindByIdTag(id)
+}
+
 // private methods
 func (service *TagService) validateDependencies(userId, iconId int, parentId *int) error {
 	if _, err := service.userRepo.FindByIdUser(userId); err != nil {

@@ -55,4 +55,5 @@ func (s *Server) TagRoutes(router *gin.RouterGroup, deps *Dependencies) {
 	tagRouter.PUT("/:id", authMiddleware.AuthMiddleware(), deps.TagHandler.UpdateTag)
 
 	tagRouter.GET("", deps.TagHandler.FindWithPagination)
+	tagRouter.GET("/:id", deps.TagHandler.FindById)
 }

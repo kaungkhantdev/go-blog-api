@@ -5,7 +5,6 @@ import (
 	"go-blog-api/internal/tag/services"
 	"go-blog-api/pkg/utils"
 	"go-blog-api/pkg/validator"
-	"log"
 	"net/http"
 	"strconv"
 
@@ -72,7 +71,7 @@ func (handler *TagHandler) UpdateTag(context *gin.Context) {
 	if handler.bindAndValidate(context, &input) != nil {
 		return
 	}
-	log.Println("## log", input.ParentId)
+
 	data, err := handler.tagService.UpdateTag(intId, input)
 	handler.handleResponse(context, "Success", data, err)
 
@@ -83,4 +82,16 @@ func (handler *TagHandler) FindWithPagination(context *gin.Context) {
 	data, err := handler.tagService.FindWithPagination(context)
 	handler.handleResponse(context, "Success", data, err)
 
+}
+
+func (handler *TagHandler) FindById(context *gin.Context) {
+	id := context.Param("id")
+	intId, err := strconv.Atoi(id)
+	if err != nil {
+		utils.ErrorResponse(context, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	tag, err := handler.tagService.FindByIdTag(intId)
+	handler.handleResponse(context, "Success", tag, err)
 }
