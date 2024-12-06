@@ -9,6 +9,7 @@ import (
 
 type TagRepositoryInterface interface {
 	CreateTag(input requests.TagCreateRequest) (models.Tag, error)
+	FindByIdTag(id int) (models.Tag, error)
 	UpdateTag(id int, data requests.TagUpdateRequest) (models.Tag, error)
 	FindWithPagination(ctx *gin.Context) ([]models.Tag, error)
 }

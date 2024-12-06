@@ -19,12 +19,14 @@ import (
 	tagHandler "go-blog-api/internal/tag/handlers"
 	tagRepo "go-blog-api/internal/tag/repository"
 	tagService "go-blog-api/internal/tag/services"
+
+	iconRepo "go-blog-api/internal/icon/repository"
 )
 
 type Dependencies struct {
 	UserHandler *userHandler.UserHandler
 	AuthHandler *authHandler.AuthHandler
-	TagHandler *tagHandler.TagHandler
+	TagHandler  *tagHandler.TagHandler
 }
 
 func NewAppDependencies() (*Dependencies, error) {
@@ -35,11 +37,9 @@ func NewAppDependencies() (*Dependencies, error) {
 		return nil, err
 	}
 
-
 	// Create an instance of EmailService
 	emailConfig := mail.NewEmailConfig()
 	emailService := mail.NewEmailService(emailConfig)
-
 
 	// init validator
 	validator.InitValidator()
@@ -55,14 +55,17 @@ func NewAppDependencies() (*Dependencies, error) {
 	AuthService := authService.NewAuthService(OtpService, UserService, emailService)
 	AuthHandler := authHandler.NewAuthHandler(AuthService)
 
+	// icon
+	IconRepo := iconRepo.NewIconRepository(DB)
+
 	// tag
 	TagRepo := tagRepo.NewTagRepository(DB)
-	TagService := tagService.NewTagService(TagRepo)
+	TagService := tagService.NewTagService(TagRepo, UserRepo, IconRepo)
 	TagHandler := tagHandler.NewTagHandler(TagService)
 
 	return &Dependencies{
 		UserHandler: UserHandler,
 		AuthHandler: AuthHandler,
-		TagHandler: TagHandler,
+		TagHandler:  TagHandler,
 	}, err
 }

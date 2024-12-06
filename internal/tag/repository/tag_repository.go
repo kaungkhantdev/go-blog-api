@@ -1,11 +1,9 @@
 package repository
 
 import (
-	iconModel "go-blog-api/internal/icon/models"
 	"go-blog-api/internal/tag/handlers/requests"
 	"go-blog-api/internal/tag/interfaces"
 	"go-blog-api/internal/tag/models"
-	userModel "go-blog-api/internal/user/models"
 	"go-blog-api/pkg/pagination"
 
 	"github.com/gin-gonic/gin"
@@ -20,27 +18,15 @@ func NewTagRepository(db *gorm.DB) interfaces.TagRepositoryInterface {
 	return &TagRepository{db: db}
 }
 
+func (repo *TagRepository) FindByIdTag(id int) (models.Tag, error) {
+	var tag models.Tag
+	if err := repo.db.First(&tag, id).Error; err != nil {
+		return models.Tag{}, err
+	}
+	return tag, nil
+}
+
 func (repo *TagRepository) CreateTag(input requests.TagCreateRequest) (models.Tag, error) {
-	// Check if UserId exists
-	var user userModel.User
-	if err := repo.db.First(&user, input.UserId).Error; err != nil {
-		return models.Tag{}, err
-	}
-
-	// Check if IconId exists
-	var icon iconModel.Icon
-	if err := repo.db.First(&icon, input.IconId).Error; err != nil {
-		return models.Tag{}, err
-	}
-
-	// Check if ParentId exists
-	var parentTag models.Tag
-	if input.ParentId != nil {
-		if err := repo.db.First(&parentTag, input.ParentId).Error; err != nil {
-			return models.Tag{}, err
-		}
-		input.ParentId = &parentTag.ID
-	}
 
 	// Create the new tag
 	tag := models.Tag{
@@ -63,26 +49,6 @@ func (repo *TagRepository) UpdateTag(id int, input requests.TagUpdateRequest) (m
 	var tag models.Tag
 	if err := repo.db.Preload("Parent").First(&tag, id).Error; err != nil {
 		return models.Tag{}, err
-	}
-
-	// Check if the user exists
-	var user userModel.User
-	if err := repo.db.First(&user, input.UserId).Error; err != nil {
-		return models.Tag{}, err
-	}
-
-	// Check if the Icon exists
-	var icon iconModel.Icon
-	if err := repo.db.First(&icon, input.IconId).Error; err != nil {
-		return models.Tag{}, err
-	}
-
-	// Check if ParentId exists (if provided)
-	var parentTag models.Tag
-	if input.ParentId != nil {
-		if err := repo.db.First(&parentTag, input.ParentId).Error; err != nil {
-			return models.Tag{}, err
-		}
 	}
 
 	// Set the fields for update (tag's fields)
