@@ -3,6 +3,7 @@ package repository
 import (
 	"go-blog-api/internal/article/interfaces"
 	"go-blog-api/internal/article/models"
+	"go-blog-api/pkg/pagination"
 
 	"gorm.io/gorm"
 )
@@ -40,4 +41,8 @@ func (repo *ArticleRepository) FindOneById(id int) (models.Article, error) {
 		return models.Article{}, err
 	}
 	return article, nil
+}
+
+func (repo *ArticleRepository) FindWithPagination(page, pageSize int) (*pagination.PaginatedResponse, error) {
+	return pagination.GetPaginatedItems(repo.db, models.Article{}, page, pageSize)
 }

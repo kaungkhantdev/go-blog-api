@@ -51,8 +51,14 @@ func (handler *TagHandler) UpdateTag(context *gin.Context) {
 }
 
 func (handler *TagHandler) FindWithPagination(context *gin.Context) {
+	page, err := strconv.Atoi(context.DefaultQuery("page", "1"))
+	pageSize, err := strconv.Atoi(context.DefaultQuery("page_size", "10"))
+	if err != nil {
+		utils.ErrorResponse(context, err.Error(), http.StatusBadRequest)
+		return
+	}
 
-	data, err := handler.tagService.FindWithPagination(context)
+	data, err := handler.tagService.FindWithPagination(page, pageSize)
 	utils.HandleResponse(context, "Success", data, err)
 
 }

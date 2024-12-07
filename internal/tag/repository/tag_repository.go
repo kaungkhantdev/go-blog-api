@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"errors"
 	"go-blog-api/internal/tag/handlers/requests"
 	"go-blog-api/internal/tag/interfaces"
 	"go-blog-api/internal/tag/models"
@@ -67,4 +68,17 @@ func (repo *TagRepository) UpdateTag(id int, input requests.TagUpdateRequest) (m
 
 func (repo *TagRepository) FindWithPagination(page, pageSize int) (*pagination.PaginatedResponse, error) {
 	return pagination.GetPaginatedItems(repo.db, models.Tag{}, page, pageSize)
+}
+
+func (repo *TagRepository) FindByIdsTags(tagIds []int) ([]models.Tag, error) {
+	if len(tagIds) == 0 { // Check for empty slice
+		return []models.Tag{}, errors.New("tags cannot be empty")
+	}
+
+	var tags []models.Tag // Use a slice for multiple records
+	if err := repo.db.Find(&tags, tagIds).Error; err != nil {
+		return []models.Tag{}, err
+	}
+
+	return tags, nil
 }

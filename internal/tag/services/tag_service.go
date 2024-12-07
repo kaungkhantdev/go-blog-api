@@ -7,9 +7,6 @@ import (
 	"go-blog-api/internal/tag/models"
 	userRepoInterface "go-blog-api/internal/user/interfaces"
 	"go-blog-api/pkg/pagination"
-	"strconv"
-
-	"github.com/gin-gonic/gin"
 )
 
 type TagService struct {
@@ -49,9 +46,7 @@ func (service *TagService) UpdateTag(id int, data requests.TagUpdateRequest) (mo
 	return service.repo.UpdateTag(id, data)
 }
 
-func (service *TagService) FindWithPagination(ctx *gin.Context) (*pagination.PaginatedResponse, error) {
-	page, _ := strconv.Atoi(ctx.DefaultQuery("page", "1"))
-	pageSize, _ := strconv.Atoi(ctx.DefaultQuery("page_size", "10"))
+func (service *TagService) FindWithPagination(page, pageSize int) (*pagination.PaginatedResponse, error) {
 	return service.repo.FindWithPagination(page, pageSize)
 }
 

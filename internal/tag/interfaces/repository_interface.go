@@ -11,4 +11,5 @@ type TagRepositoryInterface interface {
 	FindByIdTag(id int) (models.Tag, error)
 	UpdateTag(id int, data requests.TagUpdateRequest) (models.Tag, error)
 	FindWithPagination(page, pageSize int) (*pagination.PaginatedResponse, error)
+	FindByIdsTags(tagIds []int) ([]models.Tag, error)
 }

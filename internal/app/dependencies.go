@@ -20,13 +20,18 @@ import (
 	tagRepo "go-blog-api/internal/tag/repository"
 	tagService "go-blog-api/internal/tag/services"
 
+	articleHandler "go-blog-api/internal/article/handlers"
+	articleRepo "go-blog-api/internal/article/repository"
+	articleService "go-blog-api/internal/article/services"
+
 	iconRepo "go-blog-api/internal/icon/repository"
 )
 
 type Dependencies struct {
-	UserHandler *userHandler.UserHandler
-	AuthHandler *authHandler.AuthHandler
-	TagHandler  *tagHandler.TagHandler
+	UserHandler    *userHandler.UserHandler
+	AuthHandler    *authHandler.AuthHandler
+	TagHandler     *tagHandler.TagHandler
+	ArticleHandler *articleHandler.ArticleHandler
 }
 
 func NewAppDependencies() (*Dependencies, error) {
@@ -63,9 +68,15 @@ func NewAppDependencies() (*Dependencies, error) {
 	TagService := tagService.NewTagService(TagRepo, UserRepo, IconRepo)
 	TagHandler := tagHandler.NewTagHandler(TagService)
 
+	// article
+	ArticleRepo := articleRepo.NewArticleRepository(DB)
+	ArticleService := articleService.NewArticleService(ArticleRepo, UserRepo, TagRepo)
+	ArticleHandler := articleHandler.NewArticleHandler(ArticleService)
+
 	return &Dependencies{
-		UserHandler: UserHandler,
-		AuthHandler: AuthHandler,
-		TagHandler:  TagHandler,
+		UserHandler:    UserHandler,
+		AuthHandler:    AuthHandler,
+		TagHandler:     TagHandler,
+		ArticleHandler: ArticleHandler,
 	}, err
 }

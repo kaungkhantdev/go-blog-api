@@ -21,6 +21,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	s.AuthRoutes(router, deps)
 	s.UserRoutes(router, deps)
 	s.TagRoutes(router, deps)
+	s.ArticleRoutes(router, deps)
 
 	return route
 }
@@ -56,4 +57,13 @@ func (s *Server) TagRoutes(router *gin.RouterGroup, deps *Dependencies) {
 
 	tagRouter.GET("", deps.TagHandler.FindWithPagination)
 	tagRouter.GET("/:id", deps.TagHandler.FindById)
+}
+
+func (s *Server) ArticleRoutes(router *gin.RouterGroup, deps *Dependencies) {
+	articleRouter := router.Group("/articles")
+	articleRouter.POST("", authMiddleware.AuthMiddleware(), deps.ArticleHandler.CreateArticle)
+	articleRouter.PUT("/:id", authMiddleware.AuthMiddleware(), deps.ArticleHandler.UpdateArticle)
+
+	articleRouter.GET("", deps.ArticleHandler.FindWithPagination)
+	articleRouter.GET("/:id", deps.ArticleHandler.FindById)
 }
