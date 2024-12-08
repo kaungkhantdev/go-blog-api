@@ -24,6 +24,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	s.ArticleRoutes(router, deps)
 	s.BookmarkRoutes(router, deps)
 	s.ReactionRoutes(router, deps)
+	s.CommentRoutes(router, deps)
 
 	return route
 }
@@ -81,4 +82,10 @@ func (s *Server) ReactionRoutes(router *gin.RouterGroup, deps *Dependencies) {
 	reactionRouter := router.Group("/reactions")
 	reactionRouter.POST("", authMiddleware.AuthMiddleware(), deps.ReactionHandler.CreateReaction)
 	reactionRouter.PUT("/:id", authMiddleware.AuthMiddleware(), deps.ReactionHandler.UpdateReaction)
+}
+
+func (s *Server) CommentRoutes(router *gin.RouterGroup, deps *Dependencies) {
+	commentRouter := router.Group("/comments")
+	commentRouter.POST("", authMiddleware.AuthMiddleware(), deps.CommentHandler.CreateComment)
+	commentRouter.PUT("/:id", authMiddleware.AuthMiddleware(), deps.CommentHandler.UpdateComment)
 }
