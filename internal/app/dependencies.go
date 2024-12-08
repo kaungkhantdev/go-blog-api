@@ -29,6 +29,12 @@ import (
 	bookmarkHandler "go-blog-api/internal/bookmark/handlers"
 	bookmarkRepo "go-blog-api/internal/bookmark/repository"
 	bookmarkService "go-blog-api/internal/bookmark/services"
+
+	reactionHandler "go-blog-api/internal/reaction/handlers"
+	reactionRepo "go-blog-api/internal/reaction/repository"
+	reactionService "go-blog-api/internal/reaction/services"
+
+	reactionTypeRepo "go-blog-api/internal/reaction_type/repository"
 )
 
 type Dependencies struct {
@@ -37,6 +43,7 @@ type Dependencies struct {
 	TagHandler      *tagHandler.TagHandler
 	ArticleHandler  *articleHandler.ArticleHandler
 	BookmarkHandler *bookmarkHandler.BookmarkHandler
+	ReactionHandler *reactionHandler.ReactionHandler
 }
 
 func NewAppDependencies() (*Dependencies, error) {
@@ -83,11 +90,20 @@ func NewAppDependencies() (*Dependencies, error) {
 	BookmarkService := bookmarkService.NewBookmarkService(BookmarkRepo, ArticleRepo)
 	BookmarkHandler := bookmarkHandler.NewBookmarkHandler(BookmarkService)
 
+	// reaction type
+	ReactionTypeRepo := reactionTypeRepo.NewReactionTypeRepository(DB)
+
+	// reaction
+	ReactionRepo := reactionRepo.NewReactionRepository(DB)
+	ReactionService := reactionService.NewReactionService(ReactionRepo, ArticleRepo, ReactionTypeRepo)
+	ReactionHandler := reactionHandler.NewReactionHandler(ReactionService)
+
 	return &Dependencies{
 		UserHandler:     UserHandler,
 		AuthHandler:     AuthHandler,
 		TagHandler:      TagHandler,
 		ArticleHandler:  ArticleHandler,
 		BookmarkHandler: BookmarkHandler,
+		ReactionHandler: ReactionHandler,
 	}, err
 }

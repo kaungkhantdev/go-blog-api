@@ -23,6 +23,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	s.TagRoutes(router, deps)
 	s.ArticleRoutes(router, deps)
 	s.BookmarkRoutes(router, deps)
+	s.ReactionRoutes(router, deps)
 
 	return route
 }
@@ -74,4 +75,10 @@ func (s *Server) BookmarkRoutes(router *gin.RouterGroup, deps *Dependencies) {
 	bookmarkRouter.POST("", authMiddleware.AuthMiddleware(), deps.BookmarkHandler.CreateBookmark)
 	bookmarkRouter.PUT("/:id", authMiddleware.AuthMiddleware(), deps.BookmarkHandler.UpdateBookmark)
 	bookmarkRouter.GET("/:id", authMiddleware.AuthMiddleware(), deps.BookmarkHandler.FindOneById)
+}
+
+func (s *Server) ReactionRoutes(router *gin.RouterGroup, deps *Dependencies) {
+	reactionRouter := router.Group("/reactions")
+	reactionRouter.POST("", authMiddleware.AuthMiddleware(), deps.ReactionHandler.CreateReaction)
+	reactionRouter.PUT("/:id", authMiddleware.AuthMiddleware(), deps.ReactionHandler.UpdateReaction)
 }
