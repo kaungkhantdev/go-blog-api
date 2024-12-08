@@ -25,13 +25,18 @@ import (
 	articleService "go-blog-api/internal/article/services"
 
 	iconRepo "go-blog-api/internal/icon/repository"
+
+	bookmarkHandler "go-blog-api/internal/bookmark/handlers"
+	bookmarkRepo "go-blog-api/internal/bookmark/repository"
+	bookmarkService "go-blog-api/internal/bookmark/services"
 )
 
 type Dependencies struct {
-	UserHandler    *userHandler.UserHandler
-	AuthHandler    *authHandler.AuthHandler
-	TagHandler     *tagHandler.TagHandler
-	ArticleHandler *articleHandler.ArticleHandler
+	UserHandler     *userHandler.UserHandler
+	AuthHandler     *authHandler.AuthHandler
+	TagHandler      *tagHandler.TagHandler
+	ArticleHandler  *articleHandler.ArticleHandler
+	BookmarkHandler *bookmarkHandler.BookmarkHandler
 }
 
 func NewAppDependencies() (*Dependencies, error) {
@@ -73,10 +78,16 @@ func NewAppDependencies() (*Dependencies, error) {
 	ArticleService := articleService.NewArticleService(ArticleRepo, UserRepo, TagRepo)
 	ArticleHandler := articleHandler.NewArticleHandler(ArticleService)
 
+	// bookmark
+	BookmarkRepo := bookmarkRepo.NewBookmarkRepository(DB)
+	BookmarkService := bookmarkService.NewBookmarkService(BookmarkRepo, ArticleRepo)
+	BookmarkHandler := bookmarkHandler.NewBookmarkHandler(BookmarkService)
+
 	return &Dependencies{
-		UserHandler:    UserHandler,
-		AuthHandler:    AuthHandler,
-		TagHandler:     TagHandler,
-		ArticleHandler: ArticleHandler,
+		UserHandler:     UserHandler,
+		AuthHandler:     AuthHandler,
+		TagHandler:      TagHandler,
+		ArticleHandler:  ArticleHandler,
+		BookmarkHandler: BookmarkHandler,
 	}, err
 }

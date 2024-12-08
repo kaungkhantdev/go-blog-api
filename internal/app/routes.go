@@ -22,6 +22,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	s.UserRoutes(router, deps)
 	s.TagRoutes(router, deps)
 	s.ArticleRoutes(router, deps)
+	s.BookmarkRoutes(router, deps)
 
 	return route
 }
@@ -66,4 +67,11 @@ func (s *Server) ArticleRoutes(router *gin.RouterGroup, deps *Dependencies) {
 
 	articleRouter.GET("", deps.ArticleHandler.FindWithPagination)
 	articleRouter.GET("/:id", deps.ArticleHandler.FindById)
+}
+
+func (s *Server) BookmarkRoutes(router *gin.RouterGroup, deps *Dependencies) {
+	bookmarkRouter := router.Group("/bookmarks")
+	bookmarkRouter.POST("", authMiddleware.AuthMiddleware(), deps.BookmarkHandler.CreateBookmark)
+	bookmarkRouter.PUT("/:id", authMiddleware.AuthMiddleware(), deps.BookmarkHandler.UpdateBookmark)
+	bookmarkRouter.GET("/:id", authMiddleware.AuthMiddleware(), deps.BookmarkHandler.FindOneById)
 }
