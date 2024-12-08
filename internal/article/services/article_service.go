@@ -24,10 +24,10 @@ func NewArticleService(
 	return &ArticleService{repo: repo, userRepo: userRepo, tagRepo: tagRepo}
 }
 
-func (service *ArticleService) CreateArticle(userId int, input requests.CreateArticleRequest) (interface{}, error) {
+func (service *ArticleService) CreateArticle(userId int, input requests.CreateArticleRequest) (models.Article, error) {
 	tags, err := service.tagRepo.FindByIdsTags(input.Tags)
 	if err != nil {
-		return nil, err
+		return models.Article{}, err
 	}
 
 	if err := service.validateUser(userId); err != nil {
@@ -38,17 +38,30 @@ func (service *ArticleService) CreateArticle(userId int, input requests.CreateAr
 	article := models.Article{
 		Title:   input.Title,
 		Content: input.Content,
-		Tag:     &tags,
+		Tag:     tags,
 		UserId:  userId,
 	}
 	return service.repo.CreateArticle(&article)
 }
 
-func (service *ArticleService) UpdateArticle(id int, data *models.Article) (models.Article, error) {
-	if err := service.validateUser(data.UserId); err != nil {
+func (service *ArticleService) UpdateArticle(id int, userId int, input requests.UpdateArticleRequest) (models.Article, error) {
+	tags, err := service.tagRepo.FindByIdsTags(input.Tags)
+	if err != nil {
 		return models.Article{}, err
 	}
-	return service.repo.UpdateArticle(id, data)
+
+	if err := service.validateUser(userId); err != nil {
+		return models.Article{}, err
+	}
+
+	// Create Article
+	article := models.Article{
+		Title:   input.Title,
+		Content: input.Content,
+		UserId:  userId,
+		Tag:     tags,
+	}
+	return service.repo.UpdateArticle(id, &article)
 }
 
 func (service *ArticleService) FindOneById(id int) (models.Article, error) {

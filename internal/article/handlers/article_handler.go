@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"go-blog-api/internal/article/handlers/requests"
-	"go-blog-api/internal/article/models"
 	"go-blog-api/internal/article/services"
 	"go-blog-api/pkg/utils"
 	"net/http"
@@ -48,12 +47,13 @@ func (handler *ArticleHandler) UpdateArticle(context *gin.Context) {
 		return
 	}
 
-	article := &models.Article{
-		Title:   input.Title,
-		Content: input.Content,
+	userId, err := utils.GetUserIdFromGin(context)
+	if err != nil {
+		utils.ErrorResponse(context, err.Error(), http.StatusBadRequest)
+		return
 	}
 
-	data, err := handler.articleService.UpdateArticle(intId, article)
+	data, err := handler.articleService.UpdateArticle(intId, userId, input)
 	utils.HandleResponse(context, "Success", data, err)
 
 }
