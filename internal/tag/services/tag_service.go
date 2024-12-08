@@ -29,17 +29,17 @@ func NewTagService(
 }
 
 // public methods
-func (service *TagService) CreateTag(data requests.TagCreateRequest) (models.Tag, error) {
-	if err := service.validateDependencies(data.UserId, data.IconId, data.ParentId); err != nil {
+func (service *TagService) CreateTag(data requests.TagCreateRequest, userId int) (models.Tag, error) {
+	if err := service.validateDependencies(userId, data.IconId, data.ParentId); err != nil {
 		return models.Tag{}, err
 	}
 
-	return service.repo.CreateTag(data)
+	return service.repo.CreateTag(data, userId)
 }
 
-func (service *TagService) UpdateTag(id int, data requests.TagUpdateRequest) (models.Tag, error) {
+func (service *TagService) UpdateTag(id int, data requests.TagUpdateRequest, userId int) (models.Tag, error) {
 
-	if err := service.validateDependencies(data.UserId, data.IconId, data.ParentId); err != nil {
+	if err := service.validateDependencies(userId, data.IconId, data.ParentId); err != nil {
 		return models.Tag{}, err
 	}
 

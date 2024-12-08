@@ -25,7 +25,13 @@ func (handler *ArticleHandler) CreateArticle(context *gin.Context) {
 		return
 	}
 
-	data, err := handler.articleService.CreateArticle(input)
+	userId, err := utils.GetUserIdFromGin(context)
+	if err != nil {
+		utils.ErrorResponse(context, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	data, err := handler.articleService.CreateArticle(userId, input)
 	utils.HandleResponse(context, "Success", data, err)
 }
 
@@ -43,7 +49,6 @@ func (handler *ArticleHandler) UpdateArticle(context *gin.Context) {
 	}
 
 	article := &models.Article{
-		UserId:  input.UserId,
 		Title:   input.Title,
 		Content: input.Content,
 	}

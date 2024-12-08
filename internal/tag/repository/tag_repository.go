@@ -26,13 +26,13 @@ func (repo *TagRepository) FindByIdTag(id int) (models.Tag, error) {
 	return tag, nil
 }
 
-func (repo *TagRepository) CreateTag(input requests.TagCreateRequest) (models.Tag, error) {
+func (repo *TagRepository) CreateTag(input requests.TagCreateRequest, userId int) (models.Tag, error) {
 
 	// Create the new tag
 	tag := models.Tag{
 		Name:     input.Name,
 		ParentId: input.ParentId,
-		UserId:   input.UserId,
+		UserId:   userId,
 		IconId:   input.IconId,
 	}
 
@@ -54,7 +54,6 @@ func (repo *TagRepository) UpdateTag(id int, input requests.TagUpdateRequest) (m
 	// Set the fields for update (tag's fields)
 	tag.Name = input.Name
 	tag.ParentId = input.ParentId
-	tag.UserId = input.UserId
 	tag.IconId = input.IconId
 
 	// Now, update the existing tag with the modified fields

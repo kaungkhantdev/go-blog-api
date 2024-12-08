@@ -28,7 +28,13 @@ func (handler *TagHandler) CreateTag(context *gin.Context) {
 		return
 	}
 
-	data, err := handler.tagService.CreateTag(input)
+	userId, err := utils.GetUserIdFromGin(context)
+	if err != nil {
+		utils.ErrorResponse(context, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	data, err := handler.tagService.CreateTag(input, userId)
 	utils.HandleResponse(context, "Success", data, err)
 }
 
@@ -45,7 +51,13 @@ func (handler *TagHandler) UpdateTag(context *gin.Context) {
 		return
 	}
 
-	data, err := handler.tagService.UpdateTag(intId, input)
+	userId, err := utils.GetUserIdFromGin(context)
+	if err != nil {
+		utils.ErrorResponse(context, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	data, err := handler.tagService.UpdateTag(intId, input, userId)
 	utils.HandleResponse(context, "Success", data, err)
 
 }
