@@ -1,14 +1,12 @@
 package repository
 
 import (
-	iconModel "go-blog-api/internal/icon/models"
+	"errors"
 	"go-blog-api/internal/tag/handlers/requests"
 	"go-blog-api/internal/tag/interfaces"
 	"go-blog-api/internal/tag/models"
-	userModel "go-blog-api/internal/user/models"
 	"go-blog-api/pkg/pagination"
 
-	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
@@ -20,33 +18,21 @@ func NewTagRepository(db *gorm.DB) interfaces.TagRepositoryInterface {
 	return &TagRepository{db: db}
 }
 
-func (repo *TagRepository) CreateTag(input requests.TagCreateRequest) (models.Tag, error) {
-	// Check if UserId exists
-	var user userModel.User
-	if err := repo.db.First(&user, input.UserId).Error; err != nil {
+func (repo *TagRepository) FindByIdTag(id int) (models.Tag, error) {
+	var tag models.Tag
+	if err := repo.db.First(&tag, id).Error; err != nil {
 		return models.Tag{}, err
 	}
+	return tag, nil
+}
 
-	// Check if IconId exists
-	var icon iconModel.Icon
-	if err := repo.db.First(&icon, input.IconId).Error; err != nil {
-		return models.Tag{}, err
-	}
-
-	// Check if ParentId exists
-	var parentTag models.Tag
-	if input.ParentId != nil {
-		if err := repo.db.First(&parentTag, input.ParentId).Error; err != nil {
-			return models.Tag{}, err
-		}
-		input.ParentId = &parentTag.ID
-	}
+func (repo *TagRepository) CreateTag(input requests.TagCreateRequest, userId int) (models.Tag, error) {
 
 	// Create the new tag
 	tag := models.Tag{
 		Name:     input.Name,
 		ParentId: input.ParentId,
-		UserId:   input.UserId,
+		UserId:   userId,
 		IconId:   input.IconId,
 	}
 
@@ -65,30 +51,9 @@ func (repo *TagRepository) UpdateTag(id int, input requests.TagUpdateRequest) (m
 		return models.Tag{}, err
 	}
 
-	// Check if the user exists
-	var user userModel.User
-	if err := repo.db.First(&user, input.UserId).Error; err != nil {
-		return models.Tag{}, err
-	}
-
-	// Check if the Icon exists
-	var icon iconModel.Icon
-	if err := repo.db.First(&icon, input.IconId).Error; err != nil {
-		return models.Tag{}, err
-	}
-
-	// Check if ParentId exists (if provided)
-	var parentTag models.Tag
-	if input.ParentId != nil {
-		if err := repo.db.First(&parentTag, input.ParentId).Error; err != nil {
-			return models.Tag{}, err
-		}
-	}
-
 	// Set the fields for update (tag's fields)
 	tag.Name = input.Name
 	tag.ParentId = input.ParentId
-	tag.UserId = input.UserId
 	tag.IconId = input.IconId
 
 	// Now, update the existing tag with the modified fields
@@ -100,10 +65,18 @@ func (repo *TagRepository) UpdateTag(id int, input requests.TagUpdateRequest) (m
 	return tag, nil
 }
 
-func (repo *TagRepository) FindWithPagination(ctx *gin.Context) ([]models.Tag, error) {
-	var tags []models.Tag
-	if err := repo.db.Scopes(pagination.Paginate(ctx)).Find(&tags).Error; err != nil {
-		return nil, err
+func (repo *TagRepository) FindWithPagination(page, pageSize int) (*pagination.PaginatedResponse, error) {
+	return pagination.GetPaginatedItems(repo.db, models.Tag{}, page, pageSize)
+}
+
+func (repo *TagRepository) FindByIdsTags(tagIds []int) ([]models.Tag, error) {
+	if len(tagIds) == 0 { // Check for empty slice
+		return []models.Tag{}, errors.New("tags cannot be empty")
+	}
+
+	var tags []models.Tag // Use a slice for multiple records
+	if err := repo.db.Find(&tags, tagIds).Error; err != nil {
+		return []models.Tag{}, err
 	}
 
 	return tags, nil

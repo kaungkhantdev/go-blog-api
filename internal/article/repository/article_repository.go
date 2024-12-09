@@ -3,6 +3,9 @@ package repository
 import (
 	"go-blog-api/internal/article/interfaces"
 	"go-blog-api/internal/article/models"
+	"go-blog-api/pkg/pagination"
+
+	tagModel "go-blog-api/internal/tag/models"
 
 	"gorm.io/gorm"
 )
@@ -24,13 +27,17 @@ func (repo *ArticleRepository) CreateArticle(data *models.Article) (models.Artic
 
 func (repo *ArticleRepository) UpdateArticle(id int, data *models.Article) (models.Article, error) {
 	var article models.Article
-	if err := repo.db.First(&article, id).Error; err != nil {
+	if err := repo.db.Preload("Tag").First(&article, id).Error; err != nil {
 		return models.Article{}, err
 	}
-
 	if err := repo.db.Model(&article).Updates(data).Error; err != nil {
 		return models.Article{}, err
 	}
+
+	if data.Tag == nil {
+		data.Tag = []tagModel.Tag{}
+	}
+	repo.db.Model(&article).Association("Tag").Replace(data.Tag)
 	return article, nil
 }
 
@@ -40,4 +47,8 @@ func (repo *ArticleRepository) FindOneById(id int) (models.Article, error) {
 		return models.Article{}, err
 	}
 	return article, nil
+}
+
+func (repo *ArticleRepository) FindWithPagination(page, pageSize int) (*pagination.PaginatedResponse, error) {
+	return pagination.GetPaginatedItems(repo.db, models.Article{}, page, pageSize)
 }

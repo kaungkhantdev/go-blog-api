@@ -34,3 +34,12 @@ func (repo *ReactionTypeRepository) UpdateReactionType(id int, data *models.Reac
 	}
 	return reactionType, nil
 }
+
+func (repo *ReactionTypeRepository) FindOneById(id int) (models.ReactionType, error) {
+	var reactionType models.ReactionType
+	if err := repo.db.First(&reactionType, id).Error; err != nil {
+		return models.ReactionType{}, err
+	}
+
+	return reactionType, nil
+}

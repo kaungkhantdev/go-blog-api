@@ -2,7 +2,7 @@
 
 ## go with gin
 
-### install 
+### install
 ```bash
 make install
 ```

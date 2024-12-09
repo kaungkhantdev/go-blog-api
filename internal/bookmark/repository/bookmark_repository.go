@@ -34,3 +34,19 @@ func (repo *BookmarkRepository) UpdateBookmark(id int, data *models.Bookmark) (m
 	}
 	return bookmark, nil
 }
+
+func (repo *BookmarkRepository) FindOneById(id int, userId int) (models.Bookmark, error) {
+	var bookmark models.Bookmark
+	err := repo.db.
+		Preload("Article").
+		Preload("User").
+		Where("user_id = ? AND id = ?", userId, id).
+		First(&bookmark).
+		Error
+
+	if err != nil {
+		return models.Bookmark{}, err
+	}
+
+	return bookmark, nil
+}

@@ -21,6 +21,10 @@ func (s *Server) RegisterRoutes() http.Handler {
 	s.AuthRoutes(router, deps)
 	s.UserRoutes(router, deps)
 	s.TagRoutes(router, deps)
+	s.ArticleRoutes(router, deps)
+	s.BookmarkRoutes(router, deps)
+	s.ReactionRoutes(router, deps)
+	s.CommentRoutes(router, deps)
 
 	return route
 }
@@ -55,4 +59,33 @@ func (s *Server) TagRoutes(router *gin.RouterGroup, deps *Dependencies) {
 	tagRouter.PUT("/:id", authMiddleware.AuthMiddleware(), deps.TagHandler.UpdateTag)
 
 	tagRouter.GET("", deps.TagHandler.FindWithPagination)
+	tagRouter.GET("/:id", deps.TagHandler.FindById)
+}
+
+func (s *Server) ArticleRoutes(router *gin.RouterGroup, deps *Dependencies) {
+	articleRouter := router.Group("/articles")
+	articleRouter.POST("", authMiddleware.AuthMiddleware(), deps.ArticleHandler.CreateArticle)
+	articleRouter.PUT("/:id", authMiddleware.AuthMiddleware(), deps.ArticleHandler.UpdateArticle)
+
+	articleRouter.GET("", deps.ArticleHandler.FindWithPagination)
+	articleRouter.GET("/:id", deps.ArticleHandler.FindById)
+}
+
+func (s *Server) BookmarkRoutes(router *gin.RouterGroup, deps *Dependencies) {
+	bookmarkRouter := router.Group("/bookmarks")
+	bookmarkRouter.POST("", authMiddleware.AuthMiddleware(), deps.BookmarkHandler.CreateBookmark)
+	bookmarkRouter.PUT("/:id", authMiddleware.AuthMiddleware(), deps.BookmarkHandler.UpdateBookmark)
+	bookmarkRouter.GET("/:id", authMiddleware.AuthMiddleware(), deps.BookmarkHandler.FindOneById)
+}
+
+func (s *Server) ReactionRoutes(router *gin.RouterGroup, deps *Dependencies) {
+	reactionRouter := router.Group("/reactions")
+	reactionRouter.POST("", authMiddleware.AuthMiddleware(), deps.ReactionHandler.CreateReaction)
+	reactionRouter.PUT("/:id", authMiddleware.AuthMiddleware(), deps.ReactionHandler.UpdateReaction)
+}
+
+func (s *Server) CommentRoutes(router *gin.RouterGroup, deps *Dependencies) {
+	commentRouter := router.Group("/comments")
+	commentRouter.POST("", authMiddleware.AuthMiddleware(), deps.CommentHandler.CreateComment)
+	commentRouter.PUT("/:id", authMiddleware.AuthMiddleware(), deps.CommentHandler.UpdateComment)
 }
