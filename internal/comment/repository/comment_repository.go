@@ -33,3 +33,12 @@ func (repo *CommentRepository) UpdateComment(id int, data *models.Comment) (mode
 	}
 	return comment, nil
 }
+
+func (repo *CommentRepository) FindOneById(id int) (models.Comment, error) {
+	var comment models.Comment
+	if err := repo.db.First(&comment, id).Error; err != nil {
+		return models.Comment{}, err
+	}
+
+	return comment, nil
+}
