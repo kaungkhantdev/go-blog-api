@@ -1,8 +1,8 @@
 package database
 
 import (
-	iconModel "go-blog-api/internal/icon/models"
-	reactionTypeModel "go-blog-api/internal/reaction_type/models"
+	iconModel "go-blog-api/internal/blog/icon/models"
+	reactionTypeModel "go-blog-api/internal/blog/reaction_type/models"
 	"log"
 
 	"gorm.io/gorm"
