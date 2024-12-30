@@ -6,39 +6,39 @@ import (
 
 	mail "go-blog-api/pkg/mail"
 
-	otpRepo "go-blog-api/internal/otp/repository"
-	otpService "go-blog-api/internal/otp/services"
+	otpRepo "go-blog-api/internal/core/otp/repository"
+	otpService "go-blog-api/internal/core/otp/services"
 
-	userHandler "go-blog-api/internal/user/handlers"
-	userRepo "go-blog-api/internal/user/repository"
-	userService "go-blog-api/internal/user/services"
+	userHandler "go-blog-api/internal/core/user/handlers"
+	userRepo "go-blog-api/internal/core/user/repository"
+	userService "go-blog-api/internal/core/user/services"
 
-	authHandler "go-blog-api/internal/auth/handlers"
-	authService "go-blog-api/internal/auth/services"
+	authHandler "go-blog-api/internal/core/auth/handlers"
+	authService "go-blog-api/internal/core/auth/services"
 
-	tagHandler "go-blog-api/internal/tag/handlers"
-	tagRepo "go-blog-api/internal/tag/repository"
-	tagService "go-blog-api/internal/tag/services"
+	tagHandler "go-blog-api/internal/blog/tag/handlers"
+	tagRepo "go-blog-api/internal/blog/tag/repository"
+	tagService "go-blog-api/internal/blog/tag/services"
 
-	articleHandler "go-blog-api/internal/article/handlers"
-	articleRepo "go-blog-api/internal/article/repository"
-	articleService "go-blog-api/internal/article/services"
+	articleHandler "go-blog-api/internal/blog/article/handlers"
+	articleRepo "go-blog-api/internal/blog/article/repository"
+	articleService "go-blog-api/internal/blog/article/services"
 
-	iconRepo "go-blog-api/internal/icon/repository"
+	iconRepo "go-blog-api/internal/blog/icon/repository"
 
-	bookmarkHandler "go-blog-api/internal/bookmark/handlers"
-	bookmarkRepo "go-blog-api/internal/bookmark/repository"
-	bookmarkService "go-blog-api/internal/bookmark/services"
+	bookmarkHandler "go-blog-api/internal/blog/bookmark/handlers"
+	bookmarkRepo "go-blog-api/internal/blog/bookmark/repository"
+	bookmarkService "go-blog-api/internal/blog/bookmark/services"
 
-	reactionHandler "go-blog-api/internal/reaction/handlers"
-	reactionRepo "go-blog-api/internal/reaction/repository"
-	reactionService "go-blog-api/internal/reaction/services"
+	reactionHandler "go-blog-api/internal/blog/reaction/handlers"
+	reactionRepo "go-blog-api/internal/blog/reaction/repository"
+	reactionService "go-blog-api/internal/blog/reaction/services"
 
-	reactionTypeRepo "go-blog-api/internal/reaction_type/repository"
+	reactionTypeRepo "go-blog-api/internal/blog/reaction_type/repository"
 
-	commentHandler "go-blog-api/internal/comment/handlers"
-	commentRepo "go-blog-api/internal/comment/repository"
-	commentService "go-blog-api/internal/comment/services"
+	commentHandler "go-blog-api/internal/blog/comment/handlers"
+	commentRepo "go-blog-api/internal/blog/comment/repository"
+	commentService "go-blog-api/internal/blog/comment/services"
 )
 
 type Dependencies struct {
@@ -104,7 +104,7 @@ func NewAppDependencies() (*Dependencies, error) {
 	ReactionHandler := reactionHandler.NewReactionHandler(ReactionService)
 
 	// comment
-	CommentRepo := commentRepo.NewCommentReposity(DB)
+	CommentRepo := commentRepo.NewCommentRepository(DB)
 	CommentService := commentService.NewCommentService(CommentRepo, ArticleRepo)
 	CommentHandler := commentHandler.NewCommentHandler(CommentService)
 

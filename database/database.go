@@ -10,15 +10,15 @@ import (
 
 	_ "github.com/joho/godotenv/autoload"
 
-	articleModel "go-blog-api/internal/article/models"
-	bookmarkModel "go-blog-api/internal/bookmark/models"
-	commentModel "go-blog-api/internal/comment/models"
-	iconModel "go-blog-api/internal/icon/models"
-	otpModel "go-blog-api/internal/otp/models"
-	reactionModel "go-blog-api/internal/reaction/models"
-	reactionTypeModel "go-blog-api/internal/reaction_type/models"
-	tagModel "go-blog-api/internal/tag/models"
-	userModel "go-blog-api/internal/user/models"
+	articleModel "go-blog-api/internal/blog/article/models"
+	bookmarkModel "go-blog-api/internal/blog/bookmark/models"
+	commentModel "go-blog-api/internal/blog/comment/models"
+	iconModel "go-blog-api/internal/blog/icon/models"
+	otpModel "go-blog-api/internal/core/otp/models"
+	reactionModel "go-blog-api/internal/blog/reaction/models"
+	reactionTypeModel "go-blog-api/internal/blog/reaction_type/models"
+	tagModel "go-blog-api/internal/blog/tag/models"
+	userModel "go-blog-api/internal/core/user/models"
 )
 
 var (
