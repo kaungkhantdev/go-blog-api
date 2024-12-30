@@ -15,7 +15,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 		ctx.JSON(http.StatusOK, gin.H{"data": "hello, welcome"})
 	})
 
-	routerGroup := route.Group("/api/v1")
+	routerGroup := route.Group("/api")
 	router, deps := s.InitRoutes(routerGroup)
 
 	s.AuthRoutes(router, deps)
