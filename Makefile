@@ -11,3 +11,7 @@ run:
 # Seed require data for  application
 seed:
 	@go run cmd/api/main.go -seed
+
+# Migrate require data for  application
+migrate:
+	@go run cmd/api/main.go -migrate

@@ -9,16 +9,6 @@ import (
 	"gorm.io/gorm"
 
 	_ "github.com/joho/godotenv/autoload"
-
-	articleModel "go-blog-api/internal/blog/article/models"
-	bookmarkModel "go-blog-api/internal/blog/bookmark/models"
-	commentModel "go-blog-api/internal/blog/comment/models"
-	iconModel "go-blog-api/internal/blog/icon/models"
-	otpModel "go-blog-api/internal/core/otp/models"
-	reactionModel "go-blog-api/internal/blog/reaction/models"
-	reactionTypeModel "go-blog-api/internal/blog/reaction_type/models"
-	tagModel "go-blog-api/internal/blog/tag/models"
-	userModel "go-blog-api/internal/core/user/models"
 )
 
 var (
@@ -43,22 +33,5 @@ func Connect() (*gorm.DB, error) {
 	// Log successful connection
 	log.Println("Successfully connected to the database.")
 
-	// Run AutoMigrate
-	autoMigrateDB := DB.AutoMigrate(
-		&userModel.User{},
-		&otpModel.Otp{},
-		&iconModel.Icon{},
-		&tagModel.Tag{},
-		&articleModel.Article{},
-		&bookmarkModel.Bookmark{},
-		&commentModel.Comment{},
-		&reactionModel.Reaction{},
-		&reactionTypeModel.ReactionType{},
-	)
-	if err := autoMigrateDB; err != nil {
-		log.Fatalf("Failed to auto-migrate: %v", err)
-	}
-
-	log.Println("Database migration completed successfully.")
 	return DB, nil
 }

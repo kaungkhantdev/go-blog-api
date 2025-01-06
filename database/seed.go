@@ -1,8 +1,8 @@
 package database
 
 import (
-	iconModel "go-blog-api/internal/blog/icon/models"
-	reactionTypeModel "go-blog-api/internal/blog/reaction_type/models"
+	"go-blog-api/internal/blog/icon"
+	"go-blog-api/internal/blog/reaction_type"
 	"log"
 
 	"gorm.io/gorm"
@@ -20,25 +20,25 @@ func Seed() {
 }
 
 func seedIcons(db *gorm.DB) {
-	icons := []iconModel.Icon{
+	icons := []icon.IconEntity{
 		{Icon: "love", Url: ""},
 		{Icon: "unlike", Url: ""},
 		{Icon: "haha", Url: ""},
 		{Icon: "like", Url: ""},
 	}
 
-	seedTable("Icons", &iconModel.Icon{}, icons, db)
+	seedTable("Icons", &icon.IconEntity{}, icons, db)
 }
 
 func seedReactionTypes(db *gorm.DB) {
-	reactionTypes := []reactionTypeModel.ReactionType{
+	reactionTypes := []reaction_type.ReactionTypeEntity{
 		{Type: "love", IconId: 1},
 		{Type: "unlike", IconId: 2},
 		{Type: "haha", IconId: 3},
 		{Type: "like", IconId: 4},
 	}
 
-	seedTable("ReactionTypes", &reactionTypeModel.ReactionType{}, reactionTypes, db)
+	seedTable("ReactionTypes", &reaction_type.ReactionTypeEntity{}, reactionTypes, db)
 }
 
 func seedTable(tableName string, model interface{}, data interface{}, db *gorm.DB) {
