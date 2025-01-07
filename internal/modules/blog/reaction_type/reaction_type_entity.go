@@ -1,7 +1,7 @@
 package reaction_type
 
 import (
-	"go-blog-api/internal/blog/icon"
+	"go-blog-api/internal/modules/blog/icon"
 	"time"
 )
 

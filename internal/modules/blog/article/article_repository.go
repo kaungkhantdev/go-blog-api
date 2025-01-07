@@ -1,7 +1,7 @@
 package article
 
 import (
-	"go-blog-api/internal/blog/tag"
+	"go-blog-api/internal/modules/blog/tag"
 	"go-blog-api/pkg/pagination"
 
 	"gorm.io/gorm"

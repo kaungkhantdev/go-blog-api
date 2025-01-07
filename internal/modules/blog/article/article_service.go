@@ -1,8 +1,8 @@
 package article
 
 import (
-	"go-blog-api/internal/blog/tag"
-	"go-blog-api/internal/core/user"
+	"go-blog-api/internal/modules/blog/tag"
+	"go-blog-api/internal/modules/core/user"
 	"go-blog-api/pkg/pagination"
 )
 

@@ -6,8 +6,8 @@ import (
 	"strings"
 	"time"
 
-	"go-blog-api/internal/core/otp"
-	"go-blog-api/internal/core/user"
+	"go-blog-api/internal/modules/core/otp"
+	"go-blog-api/internal/modules/core/user"
 
 	"go-blog-api/pkg/jwt"
 	jwtService "go-blog-api/pkg/jwt"
