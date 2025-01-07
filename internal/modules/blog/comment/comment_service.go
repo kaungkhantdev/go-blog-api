@@ -1,6 +1,6 @@
 package comment
 
-import "go-blog-api/internal/blog/article"
+import "go-blog-api/internal/modules/blog/article"
 
 type CommentService struct {
 	repo        CommentRepositoryInterface

@@ -1,9 +1,9 @@
 package reaction
 
 import (
-	"go-blog-api/internal/blog/article"
-	"go-blog-api/internal/blog/reaction_type"
-	"go-blog-api/internal/core/user"
+	"go-blog-api/internal/modules/blog/article"
+	"go-blog-api/internal/modules/blog/reaction_type"
+	"go-blog-api/internal/modules/core/user"
 	"time"
 )
 

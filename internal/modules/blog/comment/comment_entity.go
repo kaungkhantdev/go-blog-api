@@ -1,8 +1,8 @@
 package comment
 
 import (
-	"go-blog-api/internal/blog/article"
-	"go-blog-api/internal/core/user"
+	"go-blog-api/internal/modules/blog/article"
+	"go-blog-api/internal/modules/core/user"
 	"time"
 )
 

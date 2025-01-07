@@ -1,8 +1,8 @@
 package tag
 
 import (
-	"go-blog-api/internal/blog/icon"
-	"go-blog-api/internal/core/user"
+	"go-blog-api/internal/modules/blog/icon"
+	"go-blog-api/internal/modules/core/user"
 	"time"
 )
 
