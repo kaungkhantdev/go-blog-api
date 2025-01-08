@@ -23,3 +23,7 @@ type ReactionTypeEntity struct {
 	CreatedAt time.Time        `gorm:"autoCreateTime" json:"created_at"`
 	UpdatedAt time.Time        `gorm:"autoUpdateTime" json:"updated_at"`
 }
+
+func (ReactionTypeEntity) TableName() string {
+	return "reaction_types"
+}
