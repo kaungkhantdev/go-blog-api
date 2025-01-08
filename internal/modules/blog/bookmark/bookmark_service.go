@@ -1,6 +1,6 @@
 package bookmark
 
-import "go-blog-api/internal/blog/article"
+import "go-blog-api/internal/modules/blog/article"
 
 type BookmarkService struct {
 	repo        BookmarkRepositoryInterface

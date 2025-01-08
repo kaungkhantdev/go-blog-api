@@ -1,7 +1,7 @@
 package reaction_type
 
 import (
-	"go-blog-api/internal/blog/icon"
+	"go-blog-api/internal/modules/blog/icon"
 	"time"
 )
 
@@ -22,4 +22,8 @@ type ReactionTypeEntity struct {
 	DelFlag   bool             `gorm:"type:tinyint(1);default:0" json:"del_flag"`
 	CreatedAt time.Time        `gorm:"autoCreateTime" json:"created_at"`
 	UpdatedAt time.Time        `gorm:"autoUpdateTime" json:"updated_at"`
+}
+
+func (ReactionTypeEntity) TableName() string {
+	return "reaction_types"
 }
