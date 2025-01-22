@@ -128,7 +128,10 @@ func (auth AuthService) authPrepareUserData(data map[string]string) user.UserEnt
 
 func (auth AuthService) tokens(userId int) (map[string]string, error) {
 	accessToken, err := jwtService.GenerateJWT(userId, jwtService.GetJWTSecret(), jwtService.GetJWTExpireMinutes())
-	refreshToken, err := jwtService.GenerateJWT(userId, jwtService.GetJWTAccessTokenSecret(), jwtService.GetJWTAccessTokenExpireMinutes())
+	if err != nil {
+		return map[string]string{}, errors.New(err.Error())
+	}
+	refreshToken, err := jwtService.GenerateJWT(userId, jwtService.GetJWTRefreshTokenSecret(), jwtService.GetJWTRefreshTokenExpireMinutes())
 	if err != nil {
 		return map[string]string{}, errors.New(err.Error())
 	}
@@ -265,7 +268,7 @@ func (auth AuthService) VerifyOtpViaEmail(data map[string]string) (map[string]st
 }
 
 func (auth AuthService) VerifyRefreshToken(token string) (map[string]string, error) {
-	claims, err := jwt.VerifyJWT(token, jwt.GetJWTAccessTokenSecret())
+	claims, err := jwt.VerifyJWT(token, jwt.GetJWTRefreshTokenSecret())
 	if err != nil {
 		return map[string]string{}, errors.New(err.Error())
 	}

@@ -17,16 +17,16 @@ func GetJWTSecret() []byte {
 	return []byte(os.Getenv("JWT_SECRET"))
 }
 
-func GetJWTAccessTokenSecret() []byte {
-	return []byte(os.Getenv("JWT_ACCESS_TOKEN_SECRET"))
+func GetJWTRefreshTokenSecret() []byte {
+	return []byte(os.Getenv("JWT_REFRESH_TOKEN_SECRET"))
 }
 
 func GetJWTExpireMinutes() string {
 	return os.Getenv("JWT_EXPIRATION_MINUTES")
 }
 
-func GetJWTAccessTokenExpireMinutes() string {
-	return os.Getenv("JWT_ACCESS_TOKEN_EXPIRATION_MINUTES")
+func GetJWTRefreshTokenExpireMinutes() string {
+	return os.Getenv("JWT_REFRESH_TOKEN_EXPIRATION_MINUTES")
 }
 
 func GetJWTExpiration(expirationMinutes string) time.Duration {
